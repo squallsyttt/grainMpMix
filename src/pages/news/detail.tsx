@@ -152,22 +152,6 @@ function NewsDetail() {
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
       </View>
-
-      {/* 底部操作栏 */}
-      <View className='bottom-actions'>
-        <View className='action-btn share'>
-          <Text className='action-icon'>📤</Text>
-          <Text className='action-text'>分享</Text>
-        </View>
-        <View className='action-btn like'>
-          <Text className='action-icon'>👍</Text>
-          <Text className='action-text'>点赞</Text>
-        </View>
-        <View className='action-btn collect'>
-          <Text className='action-icon'>⭐</Text>
-          <Text className='action-text'>收藏</Text>
-        </View>
-      </View>
     </ScrollView>
   );
 }
