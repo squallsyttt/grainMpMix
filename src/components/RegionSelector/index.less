@@ -66,12 +66,22 @@
   &:active {
     transform: scale(0.98);
     background: rgba(255, 107, 53, 0.05);
+
+    .region-arrow {
+      background: rgba(255, 107, 53, 0.15);
+      color: #FF6B35;
+    }
   }
 
   &.active {
     background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 136, 86, 0.1) 100%);
     border-color: rgba(255, 107, 53, 0.3);
     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+
+    .region-arrow {
+      background: rgba(255, 107, 53, 0.2);
+      color: #FF6B35;
+    }
   }
 
   .region-name {
@@ -82,9 +92,17 @@
   }
 
   .region-arrow {
-    font-size: 16px;
+    font-size: 14px;
     color: #999999;
     margin-left: 12px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 50%;
+    transition: all 0.3s ease;
   }
 
   .region-check {
