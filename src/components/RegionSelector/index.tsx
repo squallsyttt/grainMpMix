@@ -26,6 +26,23 @@ function RegionSelector(props: RegionSelectorProps) {
     setTempCity(defaultCity);
   }, [defaultProvince, defaultCity]);
 
+  // 当弹窗打开时，根据当前选择的地区初始化状态
+  useEffect(() => {
+    if (visible && defaultProvince && defaultProvince !== '全国' && defaultCity) {
+      // 如果已选择了具体省份和城市，直接进入城市选择页
+      const province = regionData.find(p => p.name === defaultProvince);
+      if (province && province.children && province.children.length > 0) {
+        setSelectedProvince(province);
+        setStep('city');
+        console.log('打开地区选择器，直接进入城市选择页：', province.name);
+      }
+    } else if (visible) {
+      // 否则回到省份选择页
+      setStep('province');
+      setSelectedProvince(null);
+    }
+  }, [visible, defaultProvince, defaultCity]);
+
   const handleProvinceClick = (province: Region) => {
     console.log('点击省份：', province.name);
     setSelectedProvince(province);
@@ -56,15 +73,11 @@ function RegionSelector(props: RegionSelectorProps) {
   };
 
   const resetState = () => {
-    setTimeout(() => {
-      setStep('province');
-      setSelectedProvince(null);
-    }, 300);
+    // 不再自动重置状态，让 useEffect 处理
   };
 
   const handlePopupClose = () => {
     onClose();
-    resetState();
   };
 
   console.log('RegionSelector 渲染, visible:', visible);
