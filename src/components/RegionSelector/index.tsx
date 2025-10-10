@@ -115,22 +115,43 @@ function RegionSelector(props: RegionSelectorProps) {
         >
           {step === 'province' ? (
             <View className='region-list'>
-              {regionData.map(province => (
-                <View
-                  key={province.id}
-                  className={`region-item ${tempProvince === province.name ? 'active' : ''}`}
-                  onClick={() => handleProvinceClick(province)}
-                  hoverClass='none'
-                >
-                  <Text className='region-name'>{province.name}</Text>
-                  {province.children && province.children.length > 0 && (
-                    <Text className='region-arrow'>→</Text>
-                  )}
-                  {tempProvince === province.name && (
-                    <Text className='region-check'>✓</Text>
-                  )}
-                </View>
-              ))}
+              {regionData.map(province => {
+                // 判断地区类型
+                let regionType = '';
+                let regionTypeClass = '';
+                if (province.name.includes('自治区')) {
+                  regionType = '自治区';
+                  regionTypeClass = 'autonomous';
+                } else if (['北京市', '天津市', '上海市', '重庆市'].includes(province.name)) {
+                  regionType = '直辖市';
+                  regionTypeClass = 'municipality';
+                } else if (['香港特别行政区', '澳门特别行政区'].includes(province.name)) {
+                  regionType = '特别行政区';
+                  regionTypeClass = 'sar';
+                } else if (province.name.includes('省')) {
+                  regionType = '省';
+                  regionTypeClass = 'province';
+                }
+
+                return (
+                  <View
+                    key={province.id}
+                    className={`region-item ${tempProvince === province.name ? 'active' : ''}`}
+                    onClick={() => handleProvinceClick(province)}
+                    hoverClass='none'
+                  >
+                    <Text className='region-name'>{province.name}</Text>
+                    <View className='region-tags'>
+                      {regionType && (
+                        <Text className={`region-type ${regionTypeClass}`}>{regionType}</Text>
+                      )}
+                      {tempProvince === province.name && (
+                        <Text className='region-check'>✓</Text>
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
             </View>
           ) : (
             <View className='region-list'>

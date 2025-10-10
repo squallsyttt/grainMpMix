@@ -66,22 +66,12 @@
   &:active {
     transform: scale(0.98);
     background: rgba(255, 107, 53, 0.05);
-
-    .region-arrow {
-      background: rgba(255, 107, 53, 0.15);
-      color: #FF6B35;
-    }
   }
 
   &.active {
     background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 136, 86, 0.1) 100%);
     border-color: rgba(255, 107, 53, 0.3);
     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
-
-    .region-arrow {
-      background: rgba(255, 107, 53, 0.2);
-      color: #FF6B35;
-    }
   }
 
   .region-name {
@@ -91,24 +81,47 @@
     flex: 1;
   }
 
-  .region-arrow {
-    font-size: 14px;
-    color: #999999;
-    margin-left: 12px;
-    width: 24px;
-    height: 24px;
+  .region-tags {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.04);
-    border-radius: 50%;
-    transition: all 0.3s ease;
+    gap: 8px;
+  }
+
+  .region-type {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+
+    &.province {
+      color: #5B8FF9;
+      background: rgba(91, 143, 249, 0.1);
+      border: 1px solid rgba(91, 143, 249, 0.2);
+    }
+
+    &.municipality {
+      color: #9270CA;
+      background: rgba(146, 112, 202, 0.1);
+      border: 1px solid rgba(146, 112, 202, 0.2);
+    }
+
+    &.autonomous {
+      color: #F6BD16;
+      background: rgba(246, 189, 22, 0.1);
+      border: 1px solid rgba(246, 189, 22, 0.2);
+    }
+
+    &.sar {
+      color: #5AD8A6;
+      background: rgba(90, 216, 166, 0.1);
+      border: 1px solid rgba(90, 216, 166, 0.2);
+    }
   }
 
   .region-check {
     font-size: 18px;
     color: #FF6B35;
     font-weight: bold;
-    margin-left: 12px;
   }
 }
