@@ -2,6 +2,7 @@ export default defineAppConfig({
   pages: [
     'pages/index/index',
     'pages/merchant/index',
+    'pages/cart/index',
     'pages/news/index',
     'pages/news/detail',
     'pages/mine/index'
@@ -25,6 +26,10 @@ export default defineAppConfig({
       {
         pagePath: 'pages/merchant/index',
         text: '商家'
+      },
+      {
+        pagePath: 'pages/cart/index',
+        text: '购物车'
       },
       {
         pagePath: 'pages/news/index',
