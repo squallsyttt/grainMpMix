@@ -59,13 +59,15 @@
 // 文章列表
 .article-list {
   flex: 1;
-  padding: 16px 20px 20px;
+  padding: 16px 16px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .article-card {
   background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
   border-radius: 16px;
-  padding: 18px;
+  padding: 14px;
   margin-bottom: 16px;
   display: flex;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -73,6 +75,8 @@
   overflow: hidden;
   position: relative;
   border: 1px solid rgba(255, 107, 53, 0.06);
+  width: 100%;
+  box-sizing: border-box;
 
   &::before {
     content: '';
@@ -99,7 +103,9 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding-right: 16px;
+    padding-right: 12px;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .article-header {
@@ -188,8 +194,8 @@
   }
 
   .article-cover {
-    width: 128px;
-    height: 128px;
+    width: 100px;
+    height: 100px;
     border-radius: 12px;
     flex-shrink: 0;
     object-fit: cover;
