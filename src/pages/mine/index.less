@@ -2,6 +2,14 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-bottom: 70px; // 为 TabBar 预留空间
+}
+
+// 适配 iPhone X 及以上设备
+@supports (padding: max(0px)) {
+  .page {
+    padding-bottom: max(70px, calc(50px + env(safe-area-inset-bottom) + 20px));
+  }
 }
 
 .page__section {

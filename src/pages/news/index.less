@@ -3,6 +3,14 @@
   background: linear-gradient(180deg, #fef8f5 0%, #f5f7fa 100%);
   display: flex;
   flex-direction: column;
+  padding-bottom: 70px; // 为 TabBar 预留空间
+}
+
+// 适配 iPhone X 及以上设备
+@supports (padding: max(0px)) {
+  .news-page {
+    padding-bottom: max(70px, calc(50px + env(safe-area-inset-bottom) + 20px));
+  }
 }
 
 // 分类标签栏
