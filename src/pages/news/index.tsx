@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
+import RegionBar from '../../components/RegionBar';
 import './index.less';
 
 // 模拟文章数据
@@ -80,6 +81,9 @@ function News() {
 
   return (
     <View className='news-page'>
+      {/* 地区选择器 */}
+      <RegionBar />
+
       {/* 分类标签栏 */}
       <View className='category-tabs'>
         <ScrollView scrollX className='tabs-scroll'>

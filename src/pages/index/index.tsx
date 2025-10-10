@@ -1,19 +1,43 @@
 import React from 'react'
-import { View } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import { Button } from "@nutui/nutui-react-taro"
+import RegionBar from '../../components/RegionBar'
+import RegionSelector from '../../components/RegionSelector'
+import { useRegion } from '../../contexts/RegionContext'
 import './index.less'
 
 function Index() {
+  const { province, city, showSelector, closeSelector, setRegion } = useRegion()
+  
   return (
-    <View className="nutui-react-demo">
-      <View className="index">
-        欢迎使用 NutUI React 开发 Taro 多端项目。
+    <View className="page">
+      {/* 地区选择器 */}
+      <RegionBar />
+      
+      <View className="page__section">
+        <View className="page__title">粮仓Mix - 首页</View>
+        <View className="page__desc">
+          当前地区：{city || province}
+        </View>
+        <View className="page__desc">
+          为您推荐 {city || province} 的优质粮食商品
+        </View>
+        
+        <View className="page__content">
+          <Button type="primary" className="btn">
+            查看当地粮食行情
+          </Button>
+        </View>
       </View>
-      <View className="index">
-        <Button type="primary" className="btn">
-          NutUI React Button
-        </Button>
-      </View>
+      
+      {/* 地区选择弹窗 */}
+      <RegionSelector
+        visible={showSelector}
+        onClose={closeSelector}
+        onConfirm={setRegion}
+        defaultProvince={province}
+        defaultCity={city}
+      />
     </View>
   )
 }
