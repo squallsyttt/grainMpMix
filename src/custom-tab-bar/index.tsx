@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { Home, Store, Cart, Notice, User } from '@nutui/icons-react-taro';
 import './index.less';
 
-const CustomTabBar = () => {
-  const [selected, setSelected] = useState(0);
+interface TabItem {
+  pagePath: string;
+  text: string;
+  IconComponent: any;
+}
 
-  const tabList = [
+class CustomTabBar extends Component<{}, { selected: number }> {
+  tabList: TabItem[] = [
     {
       pagePath: '/pages/index/index',
       text: '首页',
@@ -35,50 +39,73 @@ const CustomTabBar = () => {
     }
   ];
 
-  useEffect(() => {
-    // 获取当前页面路径
+  state = {
+    selected: 0
+  };
+
+  componentDidMount() {
+    this.syncSelectedByRoute();
+  }
+
+  componentDidShow() {
+    this.syncSelectedByRoute();
+  }
+
+  normalizePath = (path: string) => path.replace(/^\//, '');
+
+  syncSelectedByRoute = () => {
     const pages = Taro.getCurrentPages();
-    const currentPage = pages[pages.length - 1];
-    const route = currentPage ? `/${currentPage.route}` : '';
+    const current = pages[pages.length - 1];
+    const route = current?.route ? `/${current.route}` : this.tabList[0].pagePath;
+    const normalizedRoute = this.normalizePath(route);
+    const matchedIndex = this.tabList.findIndex(
+      (item) => this.normalizePath(item.pagePath) === normalizedRoute
+    );
+    const finalIndex = matchedIndex >= 0 ? matchedIndex : 0;
 
-    // 找到对应的 tab 索引
-    const index = tabList.findIndex(item => item.pagePath === route);
-    if (index !== -1) {
-      setSelected(index);
+    if (finalIndex !== this.state.selected) {
+      this.setState({ selected: finalIndex });
     }
-  }, []);
+  };
 
-  const switchTab = (index: number, path: string) => {
-    setSelected(index);
+  switchTab = (index: number, path: string) => {
+    if (index === this.state.selected) {
+      return;
+    }
+
     Taro.switchTab({ url: path });
   };
 
-  return (
-    <View className='custom-tab-bar'>
-      {tabList.map((item, index) => {
-        const IconComponent = item.IconComponent;
-        const isSelected = selected === index;
+  render() {
+    const { selected } = this.state;
 
-        return (
-          <View
-            key={index}
-            className='tab-item'
-            onClick={() => switchTab(index, item.pagePath)}
-          >
-            <View className='tab-icon'>
-              <IconComponent
-                size={22}
-                color={isSelected ? '#FF6B35' : '#8a8a8a'}
-              />
+    return (
+      <View className='custom-tab-bar'>
+        {this.tabList.map((item, index) => {
+          const IconComponent = item.IconComponent;
+          const isSelected = selected === index;
+
+          return (
+            <View
+              key={index}
+              className='tab-item'
+              onClick={() => this.switchTab(index, item.pagePath)}
+            >
+              <View className='tab-icon'>
+                <IconComponent
+                  size={22}
+                  color={isSelected ? '#FF6B35' : '#8a8a8a'}
+                />
+              </View>
+              <Text className={`tab-text ${isSelected ? 'selected' : ''}`}>
+                {item.text}
+              </Text>
             </View>
-            <Text className={`tab-text ${isSelected ? 'selected' : ''}`}>
-              {item.text}
-            </Text>
-          </View>
-        );
-      })}
-    </View>
-  );
-};
+          );
+        })}
+      </View>
+    );
+  }
+}
 
 export default CustomTabBar;

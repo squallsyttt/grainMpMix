@@ -7,7 +7,7 @@ import './index.less';
 
 function Merchant() {
   const { province, city, showSelector, closeSelector, setRegion } = useRegion();
-  
+
   return (
     <View className='page'>
       {/* 地区选择器 */}
