@@ -25,6 +25,9 @@ const config = {
     prebundle: { enable: false }
   },
   mini: {
+    miniCssExtractPluginOption: {
+      ignoreOrder: true
+    },
     postcss: {
       pxtransform: {
         enable: true,
@@ -45,11 +48,26 @@ const config = {
           generateScopedName: '[name]__[local]___[hash:base64:5]'
         }
       }
+    },
+    webpackChain(chain) {
+      // 忽略 CSS 模块顺序警告 - 检查插件是否存在
+      if (chain.plugins.has('mini-css-extract-plugin')) {
+        chain.plugin('mini-css-extract-plugin').tap((args) => {
+          if (!args[0]) {
+            args[0] = {}
+          }
+          args[0].ignoreOrder = true
+          return args
+        })
+      }
     }
   },
   h5: {
     publicPath: '/',
     staticDirectory: 'static',
+    miniCssExtractPluginOption: {
+      ignoreOrder: true
+    },
     // esnextModules: ['nutui-react'],
     postcss: {
       pxtransform: {
@@ -69,6 +87,18 @@ const config = {
           namingPattern: 'module', // 转换模式，取值为 global/module
           generateScopedName: '[name]__[local]___[hash:base64:5]'
         }
+      }
+    },
+    webpackChain(chain) {
+      // 忽略 CSS 模块顺序警告 - 检查插件是否存在
+      if (chain.plugins.has('mini-css-extract-plugin')) {
+        chain.plugin('mini-css-extract-plugin').tap((args) => {
+          if (!args[0]) {
+            args[0] = {}
+          }
+          args[0].ignoreOrder = true
+          return args
+        })
       }
     }
   }

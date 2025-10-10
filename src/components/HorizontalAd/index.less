@@ -1,0 +1,187 @@
+.horizontal-ad {
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #f5f7fa;
+  position: relative;
+
+  // 顶部分隔线
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.06) 20%,
+      rgba(0, 0, 0, 0.06) 80%,
+      transparent 100%);
+  }
+
+  .ad-container {
+    position: relative;
+    border-radius: 14px;
+    padding: 20px 20px 20px 24px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+    border: 1.5px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                0 1px 2px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    min-height: 95px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    // 左侧装饰条 - 更粗更醒目
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: linear-gradient(180deg, #FF6B35 0%, #FF8856 50%, #FF6B35 100%);
+      border-radius: 14px 0 0 14px;
+      box-shadow: 2px 0 8px rgba(255, 107, 53, 0.3);
+    }
+
+    // 右上角装饰光晕
+    &::after {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(255, 107, 53, 0.08) 0%, transparent 65%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    &:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1),
+                  0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .ad-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    z-index: 1;
+    position: relative;
+    padding-left: 8px;
+  }
+
+  .ad-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ad-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.4;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+
+  .ad-subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: #666666;
+    line-height: 1.5;
+  }
+
+  .ad-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8856 100%);
+    border-radius: 18px;
+    box-shadow: 0 3px 8px rgba(255, 107, 53, 0.3),
+                0 1px 4px rgba(255, 107, 53, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    align-self: flex-start;
+    transition: all 0.25s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    &:active {
+      transform: scale(0.96);
+      box-shadow: 0 1px 5px rgba(255, 107, 53, 0.25),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .action-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+      letter-spacing: 0.3px;
+    }
+
+    .action-arrow {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      transform: translateX(0);
+      transition: transform 0.25s ease;
+    }
+  }
+
+  .ad-container:active .action-arrow {
+    transform: translateX(3px);
+  }
+
+  .ad-image {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
+    opacity: 0.92;
+    z-index: 0;
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
+    pointer-events: none;
+  }
+}
+
+// 响应式适配
+@media (max-width: 320px) {
+  .horizontal-ad {
+    padding: 12px;
+
+    .ad-container {
+      padding: 16px 16px 16px 20px;
+      min-height: 85px;
+    }
+
+    .ad-title {
+      font-size: 16px;
+    }
+
+    .ad-subtitle {
+      font-size: 12px;
+    }
+
+    .ad-image {
+      width: 75px;
+      height: 75px;
+      right: 12px;
+    }
+  }
+}
+
