@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import RegionBar from '../../components/RegionBar';
+import RegionSelector from '../../components/RegionSelector';
+import { useRegion } from '../../contexts/RegionContext';
 import './index.less';
 
 // 模拟文章数据
@@ -64,6 +66,7 @@ const mockArticles = [
 
 function News() {
   const [activeTab, setActiveTab] = useState('all');
+  const { province, city, showSelector, closeSelector, setRegion } = useRegion();
 
   const categories = [
     { id: 'all', name: '全部' },
@@ -130,6 +133,15 @@ function News() {
           </View>
         ))}
       </ScrollView>
+      
+      {/* 地区选择弹窗 */}
+      <RegionSelector
+        visible={showSelector}
+        onClose={closeSelector}
+        onConfirm={setRegion}
+        defaultProvince={province}
+        defaultCity={city}
+      />
     </View>
   );
 }
