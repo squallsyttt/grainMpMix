@@ -3,6 +3,7 @@ export default defineAppConfig({
     'pages/index/index',
     'pages/merchant/index',
     'pages/news/index',
+    'pages/news/detail',
     'pages/mine/index'
   ],
   window: {
@@ -12,10 +13,10 @@ export default defineAppConfig({
     navigationBarTextStyle: 'black'
   },
   tabBar: {
-    color: '#666666',
-    selectedColor: '#1677ff',
+    color: '#8a8a8a',
+    selectedColor: '#FF6B35',
     backgroundColor: '#ffffff',
-    borderStyle: 'black',
+    borderStyle: 'white',
     list: [
       {
         pagePath: 'pages/index/index',

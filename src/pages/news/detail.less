@@ -1,0 +1,311 @@
+.detail-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #ffffff 0%, #fefefe 100%);
+  padding-bottom: 88px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: #999999;
+  font-size: 15px;
+
+  &::before {
+    content: '⏳';
+    margin-right: 8px;
+    animation: rotate 1.5s linear infinite;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 封面图
+.cover-image {
+  width: 100%;
+  height: 420rpx;
+  object-fit: cover;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to top, rgba(255, 255, 255, 1), transparent);
+    pointer-events: none;
+  }
+}
+
+// 文章信息
+.article-info {
+  padding: 28px 24px;
+  margin: -20px 16px 0;
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+  position: relative;
+  z-index: 10;
+
+  .article-category-tag {
+    display: inline-block;
+    font-size: 11px;
+    color: #FF6B35;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.12) 0%, rgba(255, 136, 86, 0.12) 100%);
+    padding: 6px 14px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255, 107, 53, 0.15);
+    box-shadow: 0 2px 6px rgba(255, 107, 53, 0.15);
+  }
+
+  .article-title {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 16px;
+    background: rgba(255, 107, 53, 0.04);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 107, 53, 0.08);
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      color: #999999;
+
+      .meta-label {
+        color: #999999;
+        font-weight: 500;
+      }
+
+      .meta-value {
+        color: #666666;
+        font-weight: 500;
+      }
+
+      .meta-icon {
+        font-size: 16px;
+        margin-right: 6px;
+      }
+    }
+  }
+}
+
+// 文章正文
+.article-body {
+  padding: 28px 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  margin: 0 16px 16px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+
+  .article-content {
+    font-size: 16px;
+    line-height: 1.9;
+    color: #333333;
+
+    :global {
+      p {
+        margin-bottom: 18px;
+        text-align: justify;
+        text-indent: 2em;
+      }
+
+      h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 36px 0 18px;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 136, 86, 0.08) 100%);
+        border-left: 4px solid #FF6B35;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+      }
+
+      h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin: 28px 0 14px;
+        padding-left: 12px;
+        border-left: 3px solid #FF8856;
+      }
+
+      ul, ol {
+        margin: 20px 0;
+        padding-left: 28px;
+        background: rgba(0, 0, 0, 0.02);
+        padding: 16px 16px 16px 40px;
+        border-radius: 8px;
+
+        li {
+          margin-bottom: 10px;
+          line-height: 1.9;
+          position: relative;
+
+          &::marker {
+            color: #FF6B35;
+            font-weight: 600;
+          }
+        }
+      }
+
+      strong {
+        font-weight: 600;
+        color: #FF6B35;
+        background: linear-gradient(135deg, rgba(255, 107, 53, 0.12) 0%, rgba(255, 136, 86, 0.12) 100%);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      blockquote {
+        border-left: 4px solid #FF6B35;
+        padding: 16px 20px;
+        margin: 20px 0;
+        background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 136, 86, 0.05) 100%);
+        border-radius: 4px;
+        color: #666666;
+        font-style: italic;
+        box-shadow: 0 2px 8px rgba(255, 107, 53, 0.08);
+      }
+
+      img {
+        max-width: 100%;
+        border-radius: 12px;
+        margin: 20px 0;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.8);
+      }
+    }
+  }
+}
+
+// 底部操作栏
+.bottom-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 16px 20px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1), 0 -2px 8px rgba(0, 0, 0, 0.06);
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 107, 53, 0.08);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FF6B35, transparent);
+    border-radius: 0 0 3px 3px;
+    opacity: 0.5;
+  }
+
+  .action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 16px;
+    background: transparent;
+    position: relative;
+
+    &:active {
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 136, 86, 0.1) 100%);
+      transform: scale(0.95);
+    }
+
+    .action-icon {
+      font-size: 22px;
+      transition: all 0.3s ease;
+    }
+
+    .action-text {
+      font-size: 12px;
+      color: #666666;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    &.share {
+      &:active {
+        .action-icon {
+          transform: translateY(-3px);
+        }
+
+        .action-text {
+          color: #FF6B35;
+        }
+      }
+    }
+
+    &.like {
+      &:active {
+        .action-icon {
+          transform: scale(1.3);
+          animation: heartbeat 0.3s ease-in-out;
+        }
+
+        .action-text {
+          color: #FF6B35;
+        }
+      }
+    }
+
+    &.collect {
+      &:active {
+        .action-icon {
+          transform: rotate(72deg) scale(1.2);
+        }
+
+        .action-text {
+          color: #FF6B35;
+        }
+      }
+    }
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+}
