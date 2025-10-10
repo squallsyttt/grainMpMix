@@ -9,13 +9,8 @@ function RegionBar() {
   const displayText = province === '全国' ? '全国' : city || province;
 
   const handleClick = () => {
-    console.log('RegionBar 被点击');
-    console.log('当前状态 - province:', province, 'city:', city);
-    console.log('调用 openSelector...');
     openSelector();
   };
-
-  console.log('RegionBar 渲染，displayText:', displayText);
 
   return (
     <View className='region-bar'>

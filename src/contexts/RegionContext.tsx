@@ -35,17 +35,13 @@ export function RegionProvider({ children }: RegionProviderProps) {
     setCity(newCity);
     Taro.setStorageSync('selectedProvince', newProvince);
     Taro.setStorageSync('selectedCity', newCity);
-    console.log('全局地区已更新：', newProvince, newCity);
   };
 
   const openSelector = () => {
-    console.log('openSelector 被调用，当前 showSelector:', showSelector);
     setShowSelector(true);
-    console.log('setShowSelector(true) 已执行');
   };
-  
+
   const closeSelector = () => {
-    console.log('closeSelector 被调用');
     setShowSelector(false);
   };
 

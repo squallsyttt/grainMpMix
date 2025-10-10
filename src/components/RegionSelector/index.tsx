@@ -34,7 +34,6 @@ function RegionSelector(props: RegionSelectorProps) {
       if (province && province.children && province.children.length > 0) {
         setSelectedProvince(province);
         setStep('city');
-        console.log('打开地区选择器，直接进入城市选择页：', province.name);
       }
     } else if (visible) {
       // 否则回到省份选择页
@@ -44,12 +43,10 @@ function RegionSelector(props: RegionSelectorProps) {
   }, [visible, defaultProvince, defaultCity]);
 
   const handleProvinceClick = (province: Region) => {
-    console.log('点击省份：', province.name);
     setSelectedProvince(province);
     setTempProvince(province.name);
-    
+
     if (province.children && province.children.length > 0) {
-      console.log('进入城市选择，城市数量：', province.children.length);
       setStep('city');
     } else {
       setTempCity(province.name);
@@ -60,7 +57,6 @@ function RegionSelector(props: RegionSelectorProps) {
   };
 
   const handleCityClick = (city: Region) => {
-    console.log('点击城市：', city.name, '省份：', tempProvince);
     setTempCity(city.name);
     onConfirm(tempProvince, city.name);
     onClose();
@@ -79,8 +75,6 @@ function RegionSelector(props: RegionSelectorProps) {
   const handlePopupClose = () => {
     onClose();
   };
-
-  console.log('RegionSelector 渲染, visible:', visible);
 
   return (
     <Popup

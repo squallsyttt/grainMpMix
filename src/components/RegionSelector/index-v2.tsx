@@ -25,12 +25,10 @@ function RegionSelector(props: RegionSelectorProps) {
   }, [defaultProvince, defaultCity]);
 
   const handleProvinceClick = (province: Region) => {
-    console.log('点击省份：', province.name);
     setSelectedProvince(province);
     setTempProvince(province.name);
-    
+
     if (province.children && province.children.length > 0) {
-      console.log('进入城市选择，城市数量：', province.children.length);
       setStep('city');
     } else {
       setTempCity(province.name);
@@ -41,7 +39,6 @@ function RegionSelector(props: RegionSelectorProps) {
   };
 
   const handleCityClick = (city: Region) => {
-    console.log('点击城市：', city.name, '省份：', tempProvince);
     setTempCity(city.name);
     onConfirm(tempProvince, city.name);
     onClose();
@@ -65,17 +62,9 @@ function RegionSelector(props: RegionSelectorProps) {
     resetState();
   };
 
-  console.log('=== RegionSelector V2 渲染 ===');
-  console.log('visible 值:', visible);
-  console.log('visible 类型:', typeof visible);
-  console.log('props 完整:', JSON.stringify(props));
-
   if (!visible) {
-    console.log('❌ visible 为 false，返回 null');
     return null;
   }
-
-  console.log('✅ visible 为 true，准备渲染弹窗！');
 
   return (
     <View className='region-selector-wrapper'>
