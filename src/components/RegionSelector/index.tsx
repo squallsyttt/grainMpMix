@@ -149,19 +149,53 @@ function RegionSelector(props: RegionSelectorProps) {
             </View>
           ) : (
             <View className='region-list'>
-              {selectedProvince?.children?.map(city => (
-                <View
-                  key={city.id}
-                  className={`region-item ${tempCity === city.name ? 'active' : ''}`}
-                  onClick={() => handleCityClick(city)}
-                  hoverClass='none'
-                >
-                  <Text className='region-name'>{city.name}</Text>
-                  {tempCity === city.name && (
-                    <Text className='region-check'>✓</Text>
-                  )}
-                </View>
-              ))}
+              {selectedProvince?.children?.map(city => {
+                // 判断城市类型
+                let cityType = '';
+                let cityTypeClass = '';
+                if (city.name.includes('自治州')) {
+                  cityType = '自治州';
+                  cityTypeClass = 'autonomous-prefecture';
+                } else if (city.name.includes('地区')) {
+                  cityType = '地区';
+                  cityTypeClass = 'district';
+                } else if (city.name.includes('盟')) {
+                  cityType = '盟';
+                  cityTypeClass = 'league';
+                } else if (city.name.includes('市')) {
+                  cityType = '市';
+                  cityTypeClass = 'city';
+                } else if (city.name.includes('县')) {
+                  cityType = '县';
+                  cityTypeClass = 'county';
+                } else if (city.name.includes('岛') || city.name.includes('半岛') || city.name === '九龙' || city.name === '新界') {
+                  cityType = '区域';
+                  cityTypeClass = 'area';
+                } else {
+                  // 默认为市
+                  cityType = '市';
+                  cityTypeClass = 'city';
+                }
+
+                return (
+                  <View
+                    key={city.id}
+                    className={`region-item ${tempCity === city.name ? 'active' : ''}`}
+                    onClick={() => handleCityClick(city)}
+                    hoverClass='none'
+                  >
+                    <Text className='region-name'>{city.name}</Text>
+                    <View className='region-tags'>
+                      {cityType && (
+                        <Text className={`region-type ${cityTypeClass}`}>{cityType}</Text>
+                      )}
+                      {tempCity === city.name && (
+                        <Text className='region-check'>✓</Text>
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
             </View>
           )}
         </ScrollView>
