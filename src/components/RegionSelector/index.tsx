@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Input } from '@tarojs/components';
 import { Popup } from '@nutui/nutui-react-taro';
+import { ArrowLeft, Close } from '@nutui/icons-react-taro';
 import { regionData, getProvinceShortName, Region } from '../../data/regions';
 import './index.less';
 
@@ -209,7 +210,7 @@ function RegionSelector(props: RegionSelectorProps) {
         <View className='region-header'>
           {step === 'city' && !searchKeyword && (
             <View className='back-btn' onClick={handleBack}>
-              <Text className='back-icon'>←</Text>
+              <ArrowLeft size={20} />
             </View>
           )}
           <Text className='region-title'>
@@ -231,7 +232,7 @@ function RegionSelector(props: RegionSelectorProps) {
             />
             {searchKeyword && (
               <View className='clear-btn' onClick={handleClearSearch}>
-                <Text className='clear-icon'>✕</Text>
+                <Close size={16} />
               </View>
             )}
           </View>

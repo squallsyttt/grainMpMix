@@ -22,11 +22,15 @@
     transform: translateY(-50%);
     padding: 8px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333333;
+    transition: all 0.2s ease;
 
-    .back-icon {
-      font-size: 20px;
-      color: #333333;
-      font-weight: bold;
+    &:active {
+      transform: translateY(-50%) scale(0.9);
+      opacity: 0.6;
     }
   }
 
@@ -224,17 +228,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
-  .clear-icon {
-    font-size: 16px;
-    color: #999999;
-    font-weight: bold;
-  }
+  color: #999999;
+  transition: all 0.2s ease;
 
   &:active {
-    .clear-icon {
-      color: #666666;
-    }
+    transform: scale(0.9);
+    color: #666666;
   }
 }
 
