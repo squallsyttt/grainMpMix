@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Input } from '@tarojs/components';
 import { Popup } from '@nutui/nutui-react-taro';
 import { regionData, getProvinceShortName, Region } from '../../data/regions';
