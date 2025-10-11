@@ -198,8 +198,7 @@ function RegionSelector(props: RegionSelectorProps) {
     <Popup
       visible={visible}
       position='right'
-      closeable
-      closeIcon='close'
+      closeable={false}
       onClose={handlePopupClose}
       style={{ width: '80%', height: '100%' }}
       destroyOnClose={false}
@@ -216,6 +215,9 @@ function RegionSelector(props: RegionSelectorProps) {
           <Text className='region-title'>
             {searchKeyword ? '搜索地区' : (step === 'province' ? '选择省份' : `${getProvinceShortName(tempProvince)} - 选择城市`)}
           </Text>
+          <View className='close-btn' onClick={handlePopupClose}>
+            <Close size={20} />
+          </View>
         </View>
 
         {/* 搜索框 */}
