@@ -8,6 +8,7 @@
     "experimentalDecorators": true,
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "outDir": "lib",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -20,7 +21,8 @@
     "resolveJsonModule": true,
     "typeRoots": [
       "node_modules/@types"
-    ]
+    ],
+    "skipLibCheck": true
   },
   "include": ["./src", "./types"],
   "compileOnSave": false

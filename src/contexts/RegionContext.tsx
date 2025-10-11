@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import Taro from '@tarojs/taro';
 
 interface RegionContextType {
@@ -17,31 +17,39 @@ interface RegionProviderProps {
 }
 
 export function RegionProvider({ children }: RegionProviderProps) {
-  const [province, setProvince] = useState('全国');
-  const [city, setCity] = useState('');
-  const [showSelector, setShowSelector] = useState(false);
+  const [province, setProvince] = useState<string>('全国');
+  const [city, setCity] = useState<string>('');
+  const [showSelector, setShowSelector] = useState<boolean>(false);
 
   useEffect(() => {
-    const savedProvince = Taro.getStorageSync('selectedProvince');
-    const savedCity = Taro.getStorageSync('selectedCity');
-    if (savedProvince) {
-      setProvince(savedProvince);
-      setCity(savedCity || '');
+    try {
+      const savedProvince = Taro.getStorageSync<string>('selectedProvince');
+      const savedCity = Taro.getStorageSync<string>('selectedCity');
+      if (savedProvince && typeof savedProvince === 'string') {
+        setProvince(savedProvince);
+        setCity(typeof savedCity === 'string' ? savedCity : '');
+      }
+    } catch (error) {
+      console.error('Failed to load region from storage:', error);
     }
   }, []);
 
-  const setRegion = (newProvince: string, newCity: string) => {
+  const setRegion = (newProvince: string, newCity: string): void => {
     setProvince(newProvince);
     setCity(newCity);
-    Taro.setStorageSync('selectedProvince', newProvince);
-    Taro.setStorageSync('selectedCity', newCity);
+    try {
+      Taro.setStorageSync('selectedProvince', newProvince);
+      Taro.setStorageSync('selectedCity', newCity);
+    } catch (error) {
+      console.error('Failed to save region to storage:', error);
+    }
   };
 
-  const openSelector = () => {
+  const openSelector = (): void => {
     setShowSelector(true);
   };
 
-  const closeSelector = () => {
+  const closeSelector = (): void => {
     setShowSelector(false);
   };
 
@@ -61,7 +69,7 @@ export function RegionProvider({ children }: RegionProviderProps) {
   );
 }
 
-export function useRegion() {
+export function useRegion(): RegionContextType {
   const context = useContext(RegionContext);
   if (!context) {
     throw new Error('useRegion must be used within RegionProvider');
