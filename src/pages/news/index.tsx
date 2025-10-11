@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import RegionBar from '../../components/RegionBar';
 import RegionSelector from '../../components/RegionSelector';
+import ArticleCardSkeleton from '../../components/ArticleCardSkeleton';
 import { useRegion } from '../../contexts/RegionContext';
 import './index.less';
 
@@ -66,6 +67,10 @@ const mockArticles = [
 
 function News() {
   const [activeTab, setActiveTab] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [articles, setArticles] = useState<typeof mockArticles>([]);
+  const [dataReady, setDataReady] = useState(false); // 接口数据是否就绪
+  const [imagesLoaded, setImagesLoaded] = useState<Record<number, boolean>>({}); // 追踪每张图片的加载状态
   const { province, city, showSelector, closeSelector, setRegion } = useRegion();
 
   const categories = [
@@ -75,6 +80,72 @@ function News() {
     { id: 'tech', name: '科技前沿' },
     { id: 'industry', name: '行业新闻' }
   ];
+
+  // 模拟数据加载
+  useEffect(() => {
+    loadArticles();
+  }, []);
+
+  // 切换分类时重新加载
+  useEffect(() => {
+    loadArticles();
+  }, [activeTab]);
+
+  // 监听数据和图片加载状态，只有全部完成才隐藏 skeleton
+  useEffect(() => {
+    if (!dataReady) return;
+
+    // 检查所有图片是否都已加载
+    const allImagesLoaded = articles.length > 0 &&
+      articles.every(article => imagesLoaded[article.id] === true);
+
+    if (allImagesLoaded) {
+      // 所有资源都加载完成，隐藏 skeleton
+      setLoading(false);
+      return;
+    }
+
+    // 添加超时保护：数据就绪后最多等待 2 秒
+    // 如果图片一直没加载完（例如被小程序域名限制），强制隐藏 skeleton
+    const timeout = setTimeout(() => {
+      console.warn('图片加载超时，强制显示内容');
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, [dataReady, imagesLoaded, articles]);
+
+  const loadArticles = async () => {
+    // 重置状态
+    setLoading(true);
+    setDataReady(false);
+    setImagesLoaded({});
+
+    // 模拟网络请求延迟
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setArticles(mockArticles);
+
+    // 标记数据已就绪，但不隐藏 loading，等待图片加载完成
+    setDataReady(true);
+  };
+
+  // 图片加载完成的回调
+  const handleImageLoad = (articleId: number) => {
+    console.log(`图片加载成功: article ${articleId}`);
+    setImagesLoaded(prev => ({
+      ...prev,
+      [articleId]: true
+    }));
+  };
+
+  // 图片加载失败的回调（也视为加载完成，避免无限等待）
+  const handleImageError = (articleId: number) => {
+    console.warn(`图片加载失败: article ${articleId}`);
+    setImagesLoaded(prev => ({
+      ...prev,
+      [articleId]: true
+    }));
+  };
 
   const handleArticleClick = (id: number) => {
     Taro.navigateTo({
@@ -105,33 +176,41 @@ function News() {
 
       {/* 文章列表 */}
       <ScrollView scrollY className='article-list'>
-        {mockArticles.map(article => (
-          <View
-            key={article.id}
-            className='article-card'
-            onClick={() => handleArticleClick(article.id)}
-          >
-            <View className='article-content'>
-              <View className='article-header'>
-                <Text className='article-category'>{article.category}</Text>
-                <Text className='article-time'>{article.publishTime}</Text>
-              </View>
-              <Text className='article-title'>{article.title}</Text>
-              <Text className='article-summary'>{article.summary}</Text>
-              <View className='article-footer'>
-                <View className='article-views'>
-                  <Text className='views-icon'>👁</Text>
-                  <Text className='views-text'>{article.views}</Text>
+        {loading ? (
+          // 显示骨架屏
+          <ArticleCardSkeleton count={5} />
+        ) : (
+          // 显示真实数据
+          articles.map(article => (
+            <View
+              key={article.id}
+              className='article-card'
+              onClick={() => handleArticleClick(article.id)}
+            >
+              <View className='article-content'>
+                <View className='article-header'>
+                  <Text className='article-category'>{article.category}</Text>
+                  <Text className='article-time'>{article.publishTime}</Text>
+                </View>
+                <Text className='article-title'>{article.title}</Text>
+                <Text className='article-summary'>{article.summary}</Text>
+                <View className='article-footer'>
+                  <View className='article-views'>
+                    <Text className='views-icon'>👁</Text>
+                    <Text className='views-text'>{article.views}</Text>
+                  </View>
                 </View>
               </View>
+              <Image
+                className='article-cover'
+                src={article.cover}
+                mode='aspectFill'
+                onLoad={() => handleImageLoad(article.id)}
+                onError={() => handleImageError(article.id)}
+              />
             </View>
-            <Image
-              className='article-cover'
-              src={article.cover}
-              mode='aspectFill'
-            />
-          </View>
-        ))}
+          ))
+        )}
       </ScrollView>
       
       {/* 地区选择弹窗 */}
