@@ -1,50 +1,191 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+同步影响报告:
+版本变更: 模板 → 1.0.0
+创建日期: 2025-10-11
+这是粮仓Mix项目的初始宪法。
+所有原则源自 CLAUDE.md 开发规范。
+模板更新需求: ⚠ 宪法批准后待审查
+-->
 
-## Core Principles
+# 粮仓Mix项目宪法
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+> **语言要求**: 所有规划内容、文档注释、代码注释都必须使用中文,不要使用英文。
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+## 核心原则
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### 一、TypeScript 类型安全 (不可协商)
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+所有函数必须有明确的返回类型。React 组件必须使用 `React.FC<Props>` 或明确返回 `React.ReactElement`。复杂类型必须单独定义为清晰的接口。不允许隐式 `any` 类型。
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+**理由**: 类型安全可防止运行时错误,提高代码可维护性,并实现更好的 IDE 支持和重构能力。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### 二、UI 组件标准
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- UI 组件必须使用 `@nutui/nutui-react-taro` 库
+- 图标必须使用 `@nutui/icons-react-taro` (优先使用 SVG 导入以支持 tree-shaking)
+- 禁止使用文本符号 (←、✕、×) 作为图标替代
+- 所有视觉元素必须具备可访问性和语义正确性
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**理由**: 统一的 UI 库使用确保一致的用户体验,通过适当的 tree-shaking 减少包体积,并维护无障碍标准。
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### 三、使用 LESS 编写样式
 
-## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+- 样式必须使用 LESS 语法 (禁止 SCSS 特有功能如 `@for` 循环)
+- CSS 类命名必须遵循 BEM 规范 (块__元素--修饰符)
+- 间距必须使用 8px 的倍数 (8、16、24、32)
+- 组件样式必须与组件文件放在一起
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**理由**: LESS 是项目选择的预处理器。BEM 命名防止样式冲突并提高可读性。一致的间距创造视觉和谐。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+### 四、错误处理与韧性
+
+- 所有异步操作必须包含 try-catch 块
+- 所有网络请求必须包含超时保护 (默认 10秒)
+- 用户可见错误必须通过 `Taro.showToast` 显示友好消息
+- 网络故障必须记录上下文以便调试
+
+**理由**: 健壮的错误处理防止应用崩溃,改善失败时的用户体验,并有助于调试生产问题。
+
+### 五、代码质量与文档
+
+- 复杂函数必须包含 JSDoc 注释,包括 `@param` 和 `@returns`
+- 组件文件结构必须遵循: 类型定义 → 常量 → 组件 → 导出
+- 魔术数字必须提取为 UPPER_SNAKE_CASE 命名的常量
+- 必须使用 TODO/FIXME/NOTE 注释来跟踪技术债务
+
+**理由**: 一致的文档和结构提高代码可读性,促进团队协作,并使代码库对 AI 助手友好。
+
+### 六、性能优化
+
+- 大列表必须使用虚拟滚动
+- 图片必须使用懒加载
+- 当 props 稳定时,组件必须使用 `React.memo`
+- 事件处理器必须使用 `useCallback` 防止不必要的重渲染
+
+**理由**: 性能直接影响用户体验,尤其是在资源有限的移动设备上。
+
+### 七、Git 提交规范
+
+所有提交必须遵循 Conventional Commits 格式:
+
+```text
+<type>(<scope>): <subject>
+```
+
+有效类型: `feat`、`fix`、`style`、`refactor`、`perf`、`test`、`build`、`ci`、`chore`、`docs`
+
+提交必须:
+
+- 在主题中使用祈使语气 ("添加" 而非 "添加了")
+- 首字母不大写
+- 不以句号结尾
+- 简明扼要 (主题 ≤50 字符)
+
+**理由**: 结构化的提交历史支持自动生成变更日志,清晰的项目历史,以及更容易的代码审查。
+
+## 技术约束
+
+### 强制技术栈
+
+- **框架**: Taro 3.6.24 + React 18
+- **UI 库**: NutUI React Taro 2.3.10
+- **语言**: TypeScript 5.9.3 (严格模式)
+- **样式**: LESS (不使用 SCSS)
+- **构建工具**: Webpack 5
+
+### 禁止模式
+
+- SCSS 特有语法 (`@for`、`@while`、`@each` 循环)
+- 文本符号作为图标
+- 隐式 `any` 类型
+- 没有错误处理的异步操作
+- 内联样式 (改用 LESS 模块)
+
+## 开发工作流
+
+### 代码结构
+
+```text
+src/
+├── components/       # 可复用 UI 组件
+│   └── MyComponent/
+│       ├── index.tsx      # 组件逻辑
+│       ├── index.less     # 组件样式
+│       ├── types.ts       # 类型定义 (可选)
+│       └── README.md      # 组件文档 (可选)
+├── pages/           # 页面组件
+└── utils/           # 工具函数
+```
+
+### 组件结构顺序
+
+1. 导入语句
+2. 类型定义
+3. 常量定义
+4. 组件定义
+   - Hooks
+   - 事件处理器
+   - 渲染辅助函数
+   - JSX 返回
+5. 导出语句
+
+### 命名规范
+
+| 类型 | 规范 | 示例 |
+|------|-----------|---------|
+| 组件名 | PascalCase | `UserProfile`、`NewsCard` |
+| 函数名 | camelCase | `getUserInfo`、`handleClick` |
+| 变量名 | camelCase | `userName`、`itemList` |
+| 常量名 | UPPER_SNAKE_CASE | `API_BASE_URL`、`MAX_COUNT` |
+| 类型/接口 | PascalCase | `UserInfo`、`ApiResponse` |
+| CSS 类名 | kebab-case | `news-card`、`user-profile` |
+| 文件名 | kebab-case | `user-profile.tsx`、`api-utils.ts` |
+
+## 文档标准
+
+### 必需文档
+
+- API 集成指南 (如何获取第三方文档)
+- UI 组件使用示例
+- Git 工作流和提交规范
+- TypeScript 类型安全规则
+- 错误处理模式
+
+### 工具使用优先级
+
+获取第三方文档时:
+
+1. 识别页面类型 (静态 vs SPA)
+2. 对于 SPA 页面 (URL 中含有 `#`): 使用 Playwright 浏览器工具
+3. 对于静态页面: 使用 WebFetch → curl 作为后备
+4. 始终对已安装的包回退到 `node_modules`
+
+**理由**: 正确的工具选择确保成功检索文档并避免浪费 API 调用。
+
+## 治理
+
+### 修订流程
+
+1. 宪法变更必须提出明确理由
+2. 版本必须遵循语义化版本控制递增:
+   - 主版本 (MAJOR): 核心原则的破坏性变更
+   - 次版本 (MINOR): 新原则或扩展指导
+   - 补丁版本 (PATCH): 澄清、措辞、错别字修复
+3. 所有受影响的模板必须同步更新
+4. 必须生成同步影响报告
+
+### 合规性
+
+- 所有代码审查必须验证宪法合规性
+- CI/CD 管道应尽可能强制执行自动检查
+- 违规必须记录并在下一个迭代中解决
+- 宪法优先于所有其他编码指南
+
+### 活文档
+
+- 本宪法是一份每季度审查的活文档
+- 所有开发者可以通过拉取请求提出修订
+- 修订需要团队共识和文档更新
+- 运行时开发指导请使用 `CLAUDE.md`
+
+**版本**: 1.0.0 | **批准日期**: 2025-10-11 | **最后修订**: 2025-10-11
