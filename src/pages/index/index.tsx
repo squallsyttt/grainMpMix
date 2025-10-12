@@ -6,7 +6,10 @@ import RegionSelector from '../../components/RegionSelector'
 import HomeBanner from '../../components/HomeBanner'
 import HorizontalAd from '../../components/HorizontalAd'
 import ProductCategories from '../../components/ProductCategories'
+import ProductList from '../../components/ProductList'
 import { useRegion } from '../../contexts/RegionContext'
+import { Product } from '../../types/product'
+import MockService from '../../data/mock'
 import './index.less'
 
 function Index() {
@@ -22,10 +25,32 @@ function Index() {
     backgroundColor: '#ffffff' // 使用白色背景，与Banner区分
   })
 
+  // 热门推荐商品
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(false)
+
+  // 加载热门推荐商品
+  const loadFeaturedProducts = async (): Promise<void> => {
+    try {
+      setLoadingProducts(true)
+      const response = await MockService.getFeaturedProducts(6)
+      if (response.code === 200) {
+        setFeaturedProducts(response.data)
+      }
+    } catch (error) {
+      console.error('加载热门商品失败:', error)
+    } finally {
+      setLoadingProducts(false)
+    }
+  }
+
   // 模拟从接口获取广告位配置
   useEffect(() => {
     // TODO: 后续替换为真实接口调用
     // fetchAdConfig().then(config => setAdConfig(config))
+
+    // 加载热门推荐商品
+    loadFeaturedProducts()
   }, [])
 
   return (
@@ -48,6 +73,23 @@ function Index() {
 
       {/* 产品分类 */}
       <ProductCategories />
+
+      {/* 热门推荐 */}
+      <View className="page__section">
+        <View className="page__section-header">
+          <Text className="page__section-title">热门推荐</Text>
+          <Text className="page__section-more">更多 &gt;</Text>
+        </View>
+
+        <ProductList
+          products={featuredProducts}
+          loading={loadingProducts}
+          layout="grid"
+          columns={2}
+          emptyText="暂无推荐商品"
+          emptyDescription="敬请期待更多优质商品"
+        />
+      </View>
 
       <View className="page__section">
         <View className="page__title">粮仓Mix - 首页</View>

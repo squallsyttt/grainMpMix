@@ -1,0 +1,103 @@
+/**
+ * ProductList 组件样式
+ * 支持网格和列表两种布局模式
+ */
+
+@import '../../app.less';
+
+.product-list {
+  width: 100%;
+  min-height: 300px;
+
+  // 滚动容器
+  &__scroll {
+    width: 100%;
+    height: 100%;
+  }
+
+  // 加载状态
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+  }
+
+  &__loading-text {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #999;
+  }
+
+  // 空状态
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+  }
+
+  &__empty-desc {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #999;
+  }
+
+  // 网格布局
+  &__grid {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+
+    // 2列网格
+    &--2-columns {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    // 3列网格
+    &--3-columns {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    // 4列网格
+    &--4-columns {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  &__grid-item {
+    width: 100%;
+  }
+
+  // 列表布局
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  &__list-item {
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  // 加载更多
+  &__load-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    gap: 8px;
+  }
+
+  &__load-more-text {
+    font-size: 12px;
+    color: #999;
+  }
+}

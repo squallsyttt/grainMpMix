@@ -1,0 +1,69 @@
+/**
+ * ProductCardSkeleton 组件样式
+ */
+
+@import '../../app.less';
+
+.product-skeleton-wrapper {
+  width: 100%;
+}
+
+.product-skeleton {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+
+  // 竖向布局
+  &--vertical {
+    display: flex;
+    flex-direction: column;
+
+    .product-skeleton__info {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .product-skeleton__tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .product-skeleton__meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+  }
+
+  // 横向布局
+  &--horizontal {
+    display: flex;
+    flex-direction: row;
+    padding: 12px;
+    gap: 12px;
+
+    .product-skeleton__info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product-skeleton__tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .product-skeleton__bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+  }
+}
