@@ -1,1411 +1,869 @@
 # Tasks: 核销券个人中心
 
-**Feature**: 核销券个人中心
-**Branch**: `002-`
-**Created**: 2025-10-12
-**Total Tasks**: 48
+**Branch**: `002-` | **Date**: 2025-10-12 | **Spec**: [spec.md](./spec.md)
+**Input**: Design documents from `/specs/002-/`
+**Prerequisites**: plan.md, spec.md, data-model.md, contracts/
 
-## 执行策略
-
-**MVP范围**: User Story 1 (核销券列表查看)
-**迭代交付**: 按用户故事优先级逐个完成,每个故事完成后可独立测试和部署
-
-## Phase 1: 项目初始化和基础设施 (Setup)
-
-### T001: 创建数据库表结构 (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/database/migrations/create_voucher_tables.sql`
-
-创建MySQL数据库表结构:
-- `grain_voucher` - 核销券表(含code唯一索引、user_status复合索引)
-- `grain_store` - 门店表(含POINT+SPATIAL INDEX地理位置索引)
-- `grain_order` - 订单表(扩展已有表或创建新表)
-- `grain_writeoff_record` - 核销记录表
-- `grain_user` - 扩展已有user表,添加openid和region_code字段
-
-**验收标准**:
-- ✅ 所有表使用`grain_`前缀
-- ✅ 时间字段使用INT(10) Unix时间戳
-- ✅ 主键为INT(10) UNSIGNED AUTO_INCREMENT
-- ✅ 字符集utf8mb4,引擎InnoDB
-- ✅ 门店表location字段为POINT类型,创建SPATIAL INDEX
-- ✅ 所有索引正确创建(idx_user_status, idx_expire, idx_location等)
-
-**依赖**: 无
-**估时**: 2h
+**注**: 本任务列表专注于**前端实现**。后端 API 由后端团队负责开发，前端任务中已包含完整的 API 列表和接口说明供参考。
 
 ---
 
-### T002: [P] 创建后端API基础控制器 (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/Voucher.php`
-
-继承FastAdmin的`app\common\controller\Api`基类,创建核销券控制器骨架:
-- 设置`$noNeedLogin`和`$noNeedRight`属性
-- 引入think\Db和相关Model
-- 实现统一错误处理(`$this->error()`)和成功响应(`$this->success()`)
-
-**验收标准**:
-- ✅ 继承正确的Api基类
-- ✅ 命名空间为`app\api\controller`
-- ✅ 引入FastAdmin的Auth机制
-- ✅ PSR-2代码规范
-- ✅ 中文注释和PHPDoc
-
-**依赖**: T001
-**估时**: 1h
-
----
-
-### T003: [P] 创建前端TypeScript类型定义 (前端)
-**文件**:
-- `src/types/voucher.ts` - 核销券类型
-- `src/types/order.ts` - 订单类型
-- `src/types/store.ts` - 门店类型
-- `src/types/writeoff.ts` - 核销记录类型
-
-创建完整的TypeScript接口定义:
-- 枚举类型(VoucherType, VoucherStatus, OrderStatus)
-- 实体接口(Voucher, Order, Store)
-- DTO接口(VoucherListItem, VoucherDetail, OrderListItem等)
-- 请求/响应接口(GetVoucherListParams, ApiResponse等)
-
-**验收标准**:
-- ✅ 所有接口必须有JSDoc注释
-- ✅ 枚举值与MySQL ENUM定义一致(小写+下划线)
-- ✅ 时间字段类型为number(Unix时间戳)
-- ✅ 可选字段使用`?:`标记
-- ✅ 导出所有类型供其他模块使用
-
-**依赖**: 无
-**估时**: 2h
-
----
-
-### T004: [P] 创建前端API服务层 (前端)
-**文件**:
-- `src/services/voucher.ts` - 核销券API
-- `src/services/order.ts` - 订单API
-- `src/services/store.ts` - 门店API
-- `src/services/writeoff.ts` - 核销API
-
-封装所有后端API调用,统一使用Taro.request:
-- 统一错误处理(try-catch + 10秒超时)
-- 统一Token注入(header或query)
-- 统一响应格式解析(FastAdmin格式: code+msg+time+data)
-- TypeScript类型标注
-
-**验收标准**:
-- ✅ 所有函数有明确返回类型`Promise<T>`
-- ✅ 所有异步操作包含try-catch
-- ✅ 网络请求超时10秒
-- ✅ FastAdmin响应格式解析(code=1为成功)
-- ✅ JSDoc注释包含@param和@returns
-
-**依赖**: T003
-**估时**: 3h
-
----
-
-### T005: [P] 创建前端工具函数库 (前端)
-**文件**:
-- `src/utils/date.ts` - 日期格式化和时间戳转换
-- `src/utils/error.ts` - 错误处理和用户提示
-- `src/utils/location.ts` - 地理位置计算(Haversine公式)
-- `src/utils/qrcode.ts` - 二维码生成工具(weapp-qrcode-canvas-2d)
-
-**验收标准**:
-- ✅ date.ts: 实现Unix时间戳与Date互转、格式化函数
-- ✅ error.ts: 统一错误提示(Taro.showToast)、错误日志记录
-- ✅ location.ts: Haversine距离计算(<50个门店用)、米转公里格式化
-- ✅ qrcode.ts: 二维码生成、降级策略、保存相册功能
-- ✅ 所有函数有单元测试(Jest)
-
-**依赖**: 无
-**估时**: 4h
-
----
-
-### T006: 配置Redis缓存和分布式锁 (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/config/redis.php`
-
-配置Redis连接和缓存策略:
-- 用户Token缓存(30分钟)
-- 门店列表缓存(1小时,按region_code+category_id)
-- 核销券状态热数据(5分钟)
-- 分布式锁配置(用于防重复核销)
-
-**验收标准**:
-- ✅ Redis连接配置正确(host, port, password)
-- ✅ 实现分布式锁工具类(SET NX EX)
-- ✅ 缓存key命名规范(voucher:{id}, store:list:{region}:{category})
-- ✅ 缓存过期时间设置合理
-
-**依赖**: T001
-**估时**: 2h
-
----
-
-## Phase 2: 基础功能层 (Foundational)
-
-### T007: 实现微信登录和Token认证 (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/User.php`
-
-扩展FastAdmin的User控制器,添加微信登录:
-- `POST /api/user/wechatLogin` - 使用overtrue/wechat获取openId
-- 绑定openId到grain_user表
-- 生成FastAdmin Token并返回
-- 实现Token刷新机制
-
-**验收标准**:
-- ✅ 使用overtrue/wechat ^4.6 SDK
-- ✅ code换取openId+session_key
-- ✅ 首次登录自动创建用户记录
-- ✅ 返回token和用户信息(格式: {code:1, msg:"登录成功", data:{token, userInfo}})
-- ✅ Token有效期30天
-
-**依赖**: T002, T006
-**估时**: 3h
-
----
-
-### T008: 实现前端Token管理 (前端)
-**文件**: `src/utils/auth.ts`
-
-封装Token存储、获取、刷新逻辑:
-- Token存储在Taro.getStorageSync
-- 自动注入到API请求header
-- Token过期自动刷新
-- 登录状态检查
-
-**验收标准**:
-- ✅ Token存储使用Taro.setStorageSync
-- ✅ 提供getToken(), setToken(), clearToken()方法
-- ✅ Token过期时自动调用refreshToken接口
-- ✅ 未登录时跳转登录页
-
-**依赖**: T004, T007
-**估时**: 2h
-
----
-
-### T009: 实现地理位置权限处理 (前端)
-**文件**: `src/utils/location.ts` (扩展T005)
-
-完善地理位置获取和权限处理:
-- Taro.getLocation封装
-- 权限检查(Taro.getSetting)
-- 拒绝后引导打开设置(Taro.openSetting)
-- 未授权降级策略
-
-**验收标准**:
-- ✅ app.json配置permission.scope.userLocation
-- ✅ 首次请求弹窗说明用途
-- ✅ 拒绝后显示引导提示
-- ✅ 未授权时返回null,不阻塞业务
-- ✅ 坐标系使用gcj02(火星坐标)
-
-**依赖**: T005
-**估时**: 2h
-
----
-
-## Phase 3: User Story 1 - 核销券列表查看 (P1) 🎯
-
-**故事目标**: 用户可以查看自己的核销券列表,了解每张券的状态,并进行筛选
-
-**独立测试**: 创建测试订单 → 检查列表显示 → 验证状态筛选 → 检查分页加载
-
----
-
-### T010: [US1] 实现核销券列表查询API (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/Voucher.php`
-
-实现`GET /api/voucher/lists`接口:
-- 查询当前用户的核销券列表
-- 支持status筛选(filter参数,JSON格式)
-- 支持分页(page, limit参数)
-- 支持排序(sort=createtime, order=desc)
-- 联表查询门店信息(store_name, store_address)
-
-**验收标准**:
-- ✅ 使用`$this->auth->id`获取当前用户ID
-- ✅ 支持filter参数(JSON): {"status":"unused"}
-- ✅ 分页默认limit=20
-- ✅ 返回格式: {code:1, data:{total, per_page, current_page, data:[...]}}
-- ✅ 索引idx_user_status生效(EXPLAIN查询计划)
-- ✅ 响应时间<2秒(20条记录)
-
-**依赖**: T002, T007
-**估时**: 3h
-
----
-
-### T011: [US1] 创建核销券卡片组件 (前端)
-**文件**: `src/components/VoucherCard/index.tsx`
-
-创建可复用的核销券卡片组件:
-- 显示商品图片、名称、规格、数量
-- 显示购买时间、状态标签
-- 不同状态不同样式(待核销/已核销/已过期)
-- 点击跳转详情页
-
-**验收标准**:
-- ✅ 使用NutUI的Card组件
-- ✅ 状态标签使用Tag组件(不同颜色)
-- ✅ BEM命名规范(voucher-card, voucher-card__title)
-- ✅ 间距8px倍数
-- ✅ 使用React.memo优化性能
-- ✅ Props完整TypeScript类型定义
-
-**依赖**: T003, T005
-**估时**: 3h
-
----
-
-### T012: [US1] 实现核销券列表页面 (前端)
-**文件**: `src/pages/voucher/list/index.tsx`
-
-实现核销券列表页面:
-- 顶部状态筛选Tab(全部/待核销/已核销/已过期)
-- 列表展示(使用VoucherCard组件)
-- 下拉刷新
-- 滚动加载更多(分页)
-- 空状态提示
-
-**验收标准**:
-- ✅ 使用NutUI的Tabs组件实现状态筛选
-- ✅ 使用NutUI的PullToRefresh组件
-- ✅ 滚动到底部自动加载下一页
-- ✅ 空状态显示Empty组件+跳转商城按钮
-- ✅ Loading状态(骨架屏或Loading组件)
-- ✅ 错误状态(显示错误提示+重试按钮)
-- ✅ 首屏加载<2秒
-
-**依赖**: T004, T010, T011
-**估时**: 4h
-
----
-
-### T013: [US1] 样式实现和响应式适配 (前端)
-**文件**: `src/pages/voucher/list/index.less`
-
-实现列表页面样式:
-- BEM命名规范
-- LESS语法(禁止SCSS @for循环)
-- 8px倍数间距
-- 响应式适配(不同屏幕尺寸)
-
-**验收标准**:
-- ✅ BEM命名(voucher-list, voucher-list__tabs, voucher-list__item)
-- ✅ 间距为8, 16, 24, 32px
-- ✅ 使用LESS变量(@primary-color, @border-radius等)
-- ✅ 移动端适配(rpx单位)
-- ✅ 状态样式(待核销绿色、已过期灰色、已核销蓝色)
-
-**依赖**: T012
-**估时**: 2h
-
----
-
-### T014: [US1] 配置列表页面路由 (前端)
-**文件**:
-- `src/pages/voucher/list/index.config.ts` - 页面配置
-- `src/app.config.ts` - 路由注册
-
-配置页面:
-- 页面标题"我的核销券"
-- 开启下拉刷新
-- 注册到小程序路由
-
-**验收标准**:
-- ✅ navigationBarTitleText设置为"我的核销券"
-- ✅ enablePullDownRefresh: true
-- ✅ backgroundColor设置为主题色
-- ✅ app.config.ts的pages数组添加路径
-
-**依赖**: T012
-**估时**: 0.5h
-
----
-
-### T015: [US1] 在个人中心添加入口 (前端)
-**文件**: `src/pages/mine/index.tsx`
-
-在个人中心页面添加"我的核销券"入口:
-- 使用NutUI的Cell组件
-- 显示图标(使用@nutui/icons-react-taro)
-- 点击跳转列表页
-
-**验收标准**:
-- ✅ 使用CellGroup和Cell组件
-- ✅ 图标使用Coupon组件(不使用文本符号)
-- ✅ 显示右箭头(ArrowRight图标)
-- ✅ 点击跳转到/pages/voucher/list/index
-
-**依赖**: T012
-**估时**: 1h
-
----
-
-**✅ Checkpoint US1**: User Story 1完成验收
-- [ ] 用户可以看到所有核销券列表
-- [ ] 状态筛选功能正常(全部/待核销/已核销/已过期)
-- [ ] 下拉刷新和上拉加载更多正常
-- [ ] 空状态正确显示
-- [ ] 列表加载时间<2秒(20条)
-- [ ] 从个人中心可以跳转到列表页
-
----
-
-## Phase 4: User Story 2 - 核销券详情及二维码 (P1) 🎯
-
-**故事目标**: 用户可以查看核销券详细信息、二维码和可核销门店列表
-
-**独立测试**: 点击任意券 → 检查详情显示 → 验证二维码生成 → 检查门店列表 → 测试地图导航
-
----
-
-### T016: [US2] 实现核销券详情查询API (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/Voucher.php`
-
-实现`GET /api/voucher/detail`接口:
-- 查询指定ID的核销券完整信息
-- 联表查询门店信息(含phone, business_hours, location)
-- 联表查询订单信息(含order_no)
-- 如已核销,返回核销时间和门店
-
-**验收标准**:
-- ✅ 参数id为query参数(INT类型)
-- ✅ 验证券是否属于当前用户
-- ✅ 返回完整门店信息(longitude, latitude用于地图)
-- ✅ 已核销券返回used_at和核销门店
-- ✅ 响应时间<1秒
-
-**依赖**: T002, T007
-**估时**: 2h
-
----
-
-### T017: [US2] 实现门店列表查询API (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/Store.php`
-
-实现`GET /api/store/lists`接口:
-- 根据region_code和category_id查询可核销门店
-- 支持地理位置排序(latitude, longitude参数)
-- 使用MySQL ST_Distance_Sphere计算距离
-- 支持is_active筛选(filter参数)
-
-**验收标准**:
-- ✅ 使用SPATIAL INDEX查询
-- ✅ 返回distance字段(米)
-- ✅ 未提供经纬度时按默认顺序(id)
-- ✅ 缓存门店列表(1小时)
-- ✅ 分页默认limit=20
-- ✅ 响应时间<1秒(20个门店)
-
-**依赖**: T001, T002
-**估时**: 3h
-
----
-
-### T018: [US2] 实现二维码生成组件 (前端)
-**文件**: `src/components/VoucherQRCode/index.tsx`
-
-使用weapp-qrcode-canvas-2d生成二维码:
-- 显示核销二维码(包含券码+签名+时间戳)
-- 容错级别H(30%)
-- 支持保存到相册
-- 降级方案(显示券码文本+复制功能)
-
-**验收标准**:
-- ✅ 安装weapp-qrcode-canvas-2d依赖
-- ✅ 二维码尺寸260-300px
-- ✅ 黑色前景+白色背景
-- ✅ 保存相册功能(Taro.saveImageToPhotosAlbum)
-- ✅ 生成失败显示券码文本
-- ✅ 已核销券二维码灰色不可用
-- ✅ 生成时间<1.5秒
-
-**依赖**: T003, T005
-**估时**: 4h
-
----
-
-### T019: [US2] 创建门店列表组件 (前端)
-**文件**: `src/components/StoreList/index.tsx`
-
-创建门店列表组件:
-- 显示门店名称、地址、距离、营业时间、电话
-- 点击地址打开地图导航
-- 点击电话拨打
-- 距离按公里/米显示
-
-**验收标准**:
-- ✅ 使用NutUI的Cell组件
-- ✅ 地址使用Location图标,电话使用Phone图标
-- ✅ 点击地址调用Taro.openLocation
-- ✅ 点击电话调用Taro.makePhoneCall
-- ✅ 距离格式化(<1km显示米,>=1km显示公里)
-- ✅ 未授权位置时不显示距离,显示"--"
-
-**依赖**: T003, T009
-**估时**: 3h
-
----
-
-### T020: [US2] 实现核销券详情页面 (前端)
-**文件**: `src/pages/voucher/detail/index.tsx`
-
-实现核销券详情页面:
-- 顶部商品信息(图片、名称、规格、分类)
-- 订单信息(订单号、购买时间、支付金额)
-- 核销二维码(VoucherQRCode组件)
-- 保存二维码按钮
-- 可核销门店列表(StoreList组件)
-- 已核销显示核销时间和门店
-
-**验收标准**:
-- ✅ 从路由参数获取券ID(useRouter)
-- ✅ 调用detail和store/lists两个API
-- ✅ Loading状态(骨架屏)
-- ✅ 错误处理(显示错误+返回按钮)
-- ✅ 已核销券二维码置灰
-- ✅ 页面加载完成<1.5秒
-
-**依赖**: T004, T016, T017, T018, T019
-**估时**: 4h
-
----
-
-### T021: [US2] 详情页面样式实现 (前端)
-**文件**: `src/pages/voucher/detail/index.less`
-
-实现详情页面样式:
-- 二维码居中显示
-- 门店列表项间距统一
-- 状态标签样式(已核销/已过期)
-
-**验收标准**:
-- ✅ BEM命名(voucher-detail, voucher-detail__qrcode)
-- ✅ 二维码容器border-radius: 8px
-- ✅ 保存按钮使用主题色
-- ✅ 间距8px倍数
-- ✅ 已核销券整体50%透明度
-
-**依赖**: T020
-**估时**: 2h
-
----
-
-### T022: [US2] 配置详情页面路由 (前端)
-**文件**:
-- `src/pages/voucher/detail/index.config.ts` - 页面配置
-- `src/app.config.ts` - 路由注册
-
-配置页面:
-- 页面标题"核销券详情"
-- 禁止下拉刷新
-- 注册到小程序路由
-
-**验收标准**:
-- ✅ navigationBarTitleText设置为"核销券详情"
-- ✅ enablePullDownRefresh: false
-- ✅ app.config.ts的pages数组添加路径
-
-**依赖**: T020
-**估时**: 0.5h
-
----
-
-**✅ Checkpoint US2**: User Story 2完成验收
-- [ ] 详情页显示完整券信息和订单信息
-- [ ] 二维码生成清晰可扫描
-- [ ] 保存二维码到相册功能正常
-- [ ] 门店列表显示正确(含距离排序)
-- [ ] 点击地址可打开地图导航
-- [ ] 已核销券显示核销时间和门店
-- [ ] 页面加载时间<1.5秒
-
----
-
-## Phase 5: User Story 3 - 门店核销操作 (P2) 🎯
-
-**故事目标**: 商家可以扫描用户二维码完成核销,防止重复核销
-
-**独立测试**: 扫描测试二维码 → 验证券信息 → 确认核销 → 检查状态更新
-
----
-
-### T023: [US3] 实现二维码签名验证 (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/common/library/QrcodeVerify.php`
-
-实现二维码内容签名和验证:
-- HMAC-SHA256签名生成
-- 时间戳防重放(24小时内有效)
-- JSON格式解析和验证
-
-**验收标准**:
-- ✅ 签名密钥从config读取(secret_key)
-- ✅ 验证时间戳在24小时内
-- ✅ 签名不匹配返回false
-- ✅ JSON格式错误返回false
-- ✅ 中文注释和PHPDoc
-
-**依赖**: T002
-**估时**: 2h
-
----
-
-### T024: [US3] 实现核销扫码验证API (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/Writeoff.php`
-
-实现`POST /api/writeoff/scan`接口:
-- 解析二维码内容
-- 验证签名和时间戳
-- 查询券信息和状态
-- 返回券详情供确认
-
-**验收标准**:
-- ✅ 参数qrcode_data(二维码扫描结果JSON字符串)
-- ✅ 调用QrcodeVerify验证
-- ✅ 检查券状态(必须为unused)
-- ✅ 检查过期时间(expire_at > now())
-- ✅ 返回券详情+用户信息
-- ✅ 响应时间<1秒
-
-**依赖**: T002, T023
-**估时**: 3h
-
----
-
-### T025: [US3] 实现核销确认API (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/Writeoff.php`
-
-实现`POST /api/writeoff/confirm`接口:
-- Redis分布式锁(防并发核销)
-- 数据库事务(券状态+核销记录)
-- MySQL行锁(SELECT FOR UPDATE)
-- 缓存失效
-
-**验收标准**:
-- ✅ 使用Redis SETNX获取锁(5秒过期)
-- ✅ 使用Db::startTrans()开启事务
-- ✅ 使用lock(true)行锁查询
-- ✅ 更新voucher表status=used, used_at, used_store_id
-- ✅ 插入writeoff_record表记录
-- ✅ 事务提交后清除缓存
-- ✅ finally块释放Redis锁
-- ✅ 响应时间<3秒
-
-**依赖**: T002, T006
-**估时**: 4h
-
----
-
-### T026: [US3] 实现商家扫码页面 (前端)
-**文件**: `src/pages/merchant-scan/index.tsx`
-
-实现商家扫码核销页面:
-- 扫码按钮(Taro.scanCode)
-- 扫描后调用scan接口验证
-- 显示券详情(用户信息、商品信息、购买数量)
-- 确认核销按钮
-- 错误提示(已核销/已过期/无效)
-
-**验收标准**:
-- ✅ 使用NutUI的Button组件(扫码按钮大且醒目)
-- ✅ Taro.scanCode scanType: ['qrCode']
-- ✅ 扫描成功调用writeoff/scan接口
-- ✅ 显示券详情在Card组件中
-- ✅ 确认按钮调用writeoff/confirm接口
-- ✅ 成功后Toast提示+返回
-- ✅ 错误提示使用Toast(icon: 'none')
-
-**依赖**: T004, T024, T025
-**估时**: 4h
-
----
-
-### T027: [US3] 商家扫码页面样式 (前端)
-**文件**: `src/pages/merchant-scan/index.less`
-
-实现扫码页面样式:
-- 扫码按钮居中大尺寸
-- 券详情卡片样式
-- 确认按钮醒目
-
-**验收标准**:
-- ✅ BEM命名(merchant-scan, merchant-scan__button)
-- ✅ 扫码按钮高度120px,全宽
-- ✅ 确认按钮使用主题色,高度88px
-- ✅ 间距16px, 24px
-
-**依赖**: T026
-**估时**: 1h
-
----
-
-### T028: [US3] 配置扫码页面路由 (前端)
-**文件**:
-- `src/pages/merchant-scan/index.config.ts` - 页面配置
-- `src/app.config.ts` - 路由注册
-
-配置页面:
-- 页面标题"扫码核销"
-- 禁止下拉刷新
-- 注册到小程序路由
-
-**验收标准**:
-- ✅ navigationBarTitleText设置为"扫码核销"
-- ✅ enablePullDownRefresh: false
-- ✅ app.config.ts的pages数组添加路径
-
-**依赖**: T026
-**估时**: 0.5h
-
----
-
-**✅ Checkpoint US3**: User Story 3完成验收
-- [ ] 商家可以扫描用户二维码
-- [ ] 扫描后显示券详细信息
-- [ ] 确认核销后券状态更新为"已核销"
-- [ ] 用户端同步更新券状态
-- [ ] 已核销券再次扫描提示"该券已核销"
-- [ ] 已过期券扫描提示"该券已过期"
-- [ ] 并发核销场景不会重复核销
-- [ ] 核销响应时间<3秒
-
----
-
-## Phase 6: User Story 4 - 订单记录查询 (P2) 🎯
-
-**故事目标**: 用户可以查看完整的购买订单记录
-
-**独立测试**: 访问订单列表 → 检查订单显示 → 点击订单详情 → 验证跳转核销券
-
----
-
-### T029: [US4] 实现订单列表查询API (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/Order.php`
-
-实现`GET /api/order/lists`接口:
-- 查询当前用户的订单列表
-- 支持status筛选(filter参数)
-- 支持分页(page, limit参数)
-- 支持排序(默认createtime desc)
-- 联表查询门店名称
-
-**验收标准**:
-- ✅ 继承`app\common\controller\Api`
-- ✅ 使用`$this->auth->id`获取用户ID
-- ✅ 支持filter参数: {"status":"paid"}
-- ✅ 返回FastAdmin格式(total, per_page, current_page, data)
-- ✅ 响应时间<2秒(20条)
-
-**依赖**: T001, T002, T007
-**估时**: 2h
-
----
-
-### T030: [US4] 实现订单详情查询API (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/Order.php`
-
-实现`GET /api/order/detail`接口:
-- 查询指定订单ID的完整信息
-- 联表查询门店信息(store_name, store_address, store_phone)
-- 联表查询核销券信息(如已核销)
-- 返回配送方式标识
-
-**验收标准**:
-- ✅ 参数id为query参数(INT)
-- ✅ 验证订单是否属于当前用户
-- ✅ 返回完整订单信息
-- ✅ 已核销订单返回voucher_title, verified_at
-- ✅ 响应时间<1秒
-
-**依赖**: T001, T002, T007
-**估时**: 2h
-
----
-
-### T031: [US4] 创建订单卡片组件 (前端)
-**文件**: `src/components/OrderCard/index.tsx`
-
-创建可复用的订单卡片组件:
-- 显示订单号、商品信息、数量
-- 显示支付金额、订单状态
-- 显示购买时间、配送方式标识
-- 点击跳转详情页
-
-**验收标准**:
-- ✅ 使用NutUI的Card组件
-- ✅ 状态标签使用Tag组件
-- ✅ 配送方式显示Icon("跑腿配送"或"到店自提")
-- ✅ BEM命名规范
-- ✅ React.memo优化
-- ✅ TypeScript Props类型
-
-**依赖**: T003
-**估时**: 3h
-
----
-
-### T032: [US4] 实现订单列表页面 (前端)
-**文件**: `src/pages/order/list/index.tsx`
-
-实现订单列表页面:
-- 列表展示(使用OrderCard组件)
-- 下拉刷新
-- 滚动加载更多
-- 空状态提示
-
-**验收标准**:
-- ✅ 使用PullToRefresh组件
-- ✅ 滚动到底部自动加载
-- ✅ 空状态显示Empty组件
-- ✅ Loading状态(骨架屏)
-- ✅ 错误处理+重试
-- ✅ 首屏加载<2秒
-
-**依赖**: T004, T029, T031
-**估时**: 3h
-
----
-
-### T033: [US4] 实现订单详情页面 (前端)
-**文件**: `src/pages/order/detail/index.tsx`
-
-实现订单详情页面:
-- 订单号、商品详情、数量、单价、总价
-- 支付方式、支付时间
-- 门店信息(store_name, store_address, store_phone)
-- 已核销显示"查看核销券"按钮
-- 跑腿配送显示占位提示
-
-**验收标准**:
-- ✅ 从路由参数获取订单ID
-- ✅ 调用order/detail接口
-- ✅ 已核销订单显示Button跳转核销券详情
-- ✅ 跑腿订单显示"配送功能开发中,敬请期待"
-- ✅ Loading和错误处理
-- ✅ 页面加载<1秒
-
-**依赖**: T004, T030
-**估时**: 3h
-
----
-
-### T034: [US4] 订单页面样式实现 (前端)
-**文件**:
-- `src/pages/order/list/index.less`
-- `src/pages/order/detail/index.less`
-
-实现订单列表和详情页面样式:
-- BEM命名
-- 统一间距
-- 配送方式图标样式
-
-**验收标准**:
-- ✅ BEM命名(order-list, order-detail)
-- ✅ 间距8px倍数
-- ✅ 配送方式Icon颜色区分
-- ✅ 跑腿占位提示灰色文字
-
-**依赖**: T032, T033
-**估时**: 2h
-
----
-
-### T035: [US4] 配置订单页面路由 (前端)
-**文件**:
-- `src/pages/order/list/index.config.ts`
-- `src/pages/order/detail/index.config.ts`
-- `src/app.config.ts`
-
-配置页面:
-- 列表页标题"我的订单"
-- 详情页标题"订单详情"
-- 注册路由
-
-**验收标准**:
-- ✅ navigationBarTitleText设置正确
-- ✅ enablePullDownRefresh正确设置
-- ✅ app.config.ts注册两个页面路径
-
-**依赖**: T032, T033
-**估时**: 0.5h
-
----
-
-### T036: [US4] 在个人中心添加订单入口 (前端)
-**文件**: `src/pages/mine/index.tsx`
-
-在个人中心添加"我的订单"入口:
-- 使用Cell组件
-- Order图标
-- 点击跳转订单列表
-
-**验收标准**:
-- ✅ 使用CellGroup和Cell组件
-- ✅ 图标使用Order组件(不使用文本符号)
-- ✅ 显示右箭头
-- ✅ 点击跳转到/pages/order/list/index
-
-**依赖**: T032
-**估时**: 0.5h
-
----
-
-**✅ Checkpoint US4**: User Story 4完成验收
-- [ ] 用户可以看到所有订单列表
-- [ ] 订单列表显示正确(订单号、金额、状态、时间)
-- [ ] 点击订单可查看详情
-- [ ] 订单详情显示完整信息(商品、门店、支付等)
-- [ ] 已核销订单有"查看核销券"按钮并可跳转
-- [ ] 跑腿配送订单显示占位提示
-- [ ] 下拉刷新和上拉加载正常
-
----
-
-## Phase 7: User Story 5 - 核销券有效期管理 (P3) 🎯
-
-**故事目标**: 系统自动管理有效期,提醒用户即将过期券
-
-**独立测试**: 创建不同有效期测试券 → 检查过期标识 → 验证提醒通知 → 检查自动过期
-
----
-
-### T037: [US5] 实现订阅消息模板配置 (后端+小程序后台)
-**任务**:
-1. 小程序管理后台创建订阅消息模板
-2. 配置跳转页面路径
-3. 记录template_id到config
-
-**验收标准**:
-- ✅ 模板内容: "您的核销券即将过期"
-- ✅ 跳转路径: pages/voucher/detail?id=xxx
-- ✅ template_id记录到config/wechat.php
-
-**依赖**: 无
-**估时**: 1h
-
----
-
-### T038: [US5] 实现订阅消息请求 (前端)
-**文件**: `src/utils/subscribe.ts`
-
-封装订阅消息请求:
-- Taro.requestSubscribeMessage封装
-- 多场景订阅引导(领券时、列表页、详情页)
-- 权限拒绝后引导打开设置
-- 订阅状态本地记录
-
-**验收标准**:
-- ✅ 封装requestSubscribe()函数
-- ✅ 检查getSetting()状态
-- ✅ 拒绝后showModal引导openSetting
-- ✅ 订阅成功调用后端保存接口
-- ✅ 中文提示文案
-
-**依赖**: T004, T037
-**估时**: 3h
-
----
-
-### T039: [US5] 实现订阅记录保存API (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/api/controller/Voucher.php`
-
-实现`POST /api/voucher/subscribe`接口:
-- 保存用户订阅记录
-- 记录template_id和voucher_id
-- 设置发送时间(过期前24小时)
-
-**验收标准**:
-- ✅ 参数: voucher_id, template_id, openid
-- ✅ 写入grain_voucher_subscribe表
-- ✅ send_at = expire_at - 86400(过期前24小时)
-- ✅ status = pending
-
-**依赖**: T002, T007
-**估时**: 2h
-
----
-
-### T040: [US5] 实现过期提醒定时任务 (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/command/VoucherNotify.php`
-
-使用ThinkPHP命令行创建定时任务:
-- 每小时执行一次
-- 查询即将到达send_at的订阅记录
-- 调用微信API发送订阅消息
-- 更新订阅状态
-
-**验收标准**:
-- ✅ 继承think\console\Command
-- ✅ 查询send_at <= now() AND status=pending
-- ✅ 使用overtrue/wechat发送订阅消息
-- ✅ 发送成功status=sent, sent_at=now()
-- ✅ 发送失败status=failed, fail_reason记录
-- ✅ 批量处理(每次最多100条)
-
-**依赖**: T007, T039
-**估时**: 4h
-
----
-
-### T041: [US5] 实现自动过期定时任务 (后端)
-**文件**: `/Users/griffith/IdeaProjects/money/grainAdminMix/application/command/VoucherExpire.php`
-
-创建定时任务自动更新过期券:
-- 每小时执行一次
-- 查询expire_at < now() AND status=unused
-- 批量更新status=expired
-
-**验收标准**:
-- ✅ 继承think\console\Command
-- ✅ 查询expire_at < now() AND status='unused'
-- ✅ 批量更新status='expired'
-- ✅ 记录日志(过期数量)
-- ✅ 批量处理(每次最多1000条)
-
-**依赖**: T001, T002
-**估时**: 2h
-
----
-
-### T042: [US5] 券列表显示过期标识 (前端)
-**文件**: `src/components/VoucherCard/index.tsx` (扩展T011)
-
-扩展VoucherCard组件显示即将过期标签:
-- 剩余7天内显示"即将过期"标签
-- 使用醒目颜色(橙色)
-- 已过期券灰色样式
-
-**验收标准**:
-- ✅ 计算剩余天数(expire_at - now())
-- ✅ ≤7天显示Tag组件(type="warning")
-- ✅ 已过期整体50%透明度+灰色滤镜
-- ✅ 文案"即将过期"或"剩余X天"
-
-**依赖**: T011
-**估时**: 1h
-
----
-
-### T043: [US5] 券详情显示剩余时间 (前端)
-**文件**: `src/pages/voucher/detail/index.tsx` (扩展T020)
-
-扩展详情页显示剩余有效期:
-- 待核销显示"剩余X天"或具体过期日期
-- 已过期显示"已于YYYY-MM-DD过期"
-- 醒目提示
-
-**验收标准**:
-- ✅ 使用date.ts工具格式化时间
-- ✅ 剩余<7天红色文字
-- ✅ 已过期灰色文字
-- ✅ 显示位置明显(二维码下方)
-
-**依赖**: T020
-**估时**: 1h
-
----
-
-### T044: [US5] 配置crontab定时任务 (运维)
-**任务**:
-1. 配置服务器crontab
-2. 每小时执行VoucherNotify和VoucherExpire命令
-
-**验收标准**:
-- ✅ crontab配置: `0 * * * * cd /path && php think voucher:notify`
-- ✅ crontab配置: `0 * * * * cd /path && php think voucher:expire`
-- ✅ 日志输出到/runtime/log/
-- ✅ 定时任务正常执行(检查日志)
-
-**依赖**: T040, T041
-**估时**: 1h
-
----
-
-**✅ Checkpoint US5**: User Story 5完成验收
-- [ ] 距过期3天的券发送订阅消息提醒
-- [ ] 列表中即将过期券显示"即将过期"标签
-- [ ] 详情页显示剩余有效天数
-- [ ] 过期券自动更新为"已过期"状态
-- [ ] 过期券列表中灰色样式
-- [ ] 定时任务正常运行(检查日志)
-
----
-
-## Phase 8: User Story 6 - 跑腿配送模式入口 (P3) 🎯
-
-**故事目标**: 为未来的跑腿配送功能预留UI入口
-
-**独立测试**: 访问跑腿订单 → 检查占位界面 → 验证提示文案
-
----
-
-### T045: [US6] 订单列表显示配送方式标识 (前端)
-**文件**: `src/components/OrderCard/index.tsx` (扩展T031)
-
-扩展OrderCard组件显示配送方式:
-- delivery_mode=self_pickup显示"到店自提"
-- delivery_mode=delivery显示"跑腿配送"
-- 使用不同图标
-
-**验收标准**:
-- ✅ 自提使用Store图标
-- ✅ 跑腿使用Delivery图标(或类似)
-- ✅ 跑腿订单灰色标注"即将上线"
-- ✅ 文案清晰可辨
-
-**依赖**: T031
-**估时**: 1h
-
----
-
-### T046: [US6] 订单详情显示跑腿占位 (前端)
-**文件**: `src/pages/order/detail/index.tsx` (扩展T033)
-
-扩展订单详情页显示跑腿占位:
-- delivery_mode=delivery时显示占位UI
-- 显示基本订单信息(订单号、商品、收货地址)
-- 显示"配送功能开发中,敬请期待"提示
-
-**验收标准**:
-- ✅ 使用Empty组件显示占位
-- ✅ 文案"配送功能开发中,敬请期待"
-- ✅ 显示收货地址(如有)
-- ✅ 灰色样式
-
-**依赖**: T033
-**估时**: 1h
-
----
-
-### T047: [US6] 订单列表支持配送方式筛选 (前端)
-**文件**: `src/pages/order/list/index.tsx` (扩展T032)
-
-扩展订单列表添加配送方式筛选:
-- 添加筛选Tab: 全部/到店自提/跑腿配送
-- 跑腿配送Tab灰色标注"即将上线"
-- 点击跑腿Tab显示占位提示
-
-**验收标准**:
-- ✅ 使用Tabs组件添加筛选Tab
-- ✅ 跑腿Tab禁用或标注"即将上线"
-- ✅ 点击跑腿Tab显示Toast提示"功能开发中"
-
-**依赖**: T032
-**估时**: 1h
-
----
-
-**✅ Checkpoint US6**: User Story 6完成验收
-- [ ] 订单列表显示配送方式标识
-- [ ] 跑腿订单有明确区分
-- [ ] 订单详情页跑腿订单显示占位UI
-- [ ] 跑腿筛选Tab灰色标注"即将上线"
-- [ ] 占位文案清晰友好
-
----
-
-## Phase 9: 优化和完善 (Polish & Integration)
-
-### T048: 性能优化和错误处理完善 (前端+后端)
-**任务**:
-1. 添加全局错误边界(React ErrorBoundary)
-2. 完善所有API的错误处理和重试逻辑
-3. 添加Loading骨架屏(未实现的页面)
-4. 图片懒加载优化
-5. React.memo和useCallback优化
-6. 后端慢查询优化(EXPLAIN分析)
-7. Redis缓存命中率监控
-
-**验收标准**:
-- ✅ 所有异步操作有try-catch
-- ✅ 网络请求超时10秒
-- ✅ 用户友好的错误提示
-- ✅ 所有列表图片使用lazyLoad
-- ✅ 高频组件使用React.memo
-- ✅ MySQL慢查询<100ms
-- ✅ Redis缓存命中率≥80%
-
-**依赖**: T001-T047
-**估时**: 4h
-
----
-
-## 依赖关系图
-
-```mermaid
-graph TB
-    %% Phase 1: Setup
-    T001[T001: 数据库表结构]
-    T002[T002: 后端控制器基础]
-    T003[T003: TS类型定义]
-    T004[T004: API服务层]
-    T005[T005: 工具函数库]
-    T006[T006: Redis配置]
-
-    T001 --> T002
-    T001 --> T006
-    T003 --> T004
-
-    %% Phase 2: Foundational
-    T007[T007: 微信登录]
-    T008[T008: Token管理]
-    T009[T009: 地理位置]
-
-    T002 --> T007
-    T006 --> T007
-    T004 --> T008
-    T007 --> T008
-    T005 --> T009
-
-    %% Phase 3: US1
-    T010[T010: 券列表API]
-    T011[T011: 券卡片组件]
-    T012[T012: 券列表页面]
-    T013[T013: 列表样式]
-    T014[T014: 列表路由]
-    T015[T015: 个人中心入口]
-
-    T002 --> T010
-    T007 --> T010
-    T003 --> T011
-    T005 --> T011
-    T004 --> T012
-    T010 --> T012
-    T011 --> T012
-    T012 --> T013
-    T012 --> T014
-    T012 --> T015
-
-    %% Phase 4: US2
-    T016[T016: 券详情API]
-    T017[T017: 门店列表API]
-    T018[T018: 二维码组件]
-    T019[T019: 门店列表组件]
-    T020[T020: 券详情页面]
-    T021[T021: 详情样式]
-    T022[T022: 详情路由]
-
-    T002 --> T016
-    T007 --> T016
-    T001 --> T017
-    T002 --> T017
-    T003 --> T018
-    T005 --> T018
-    T003 --> T019
-    T009 --> T019
-    T004 --> T020
-    T016 --> T020
-    T017 --> T020
-    T018 --> T020
-    T019 --> T020
-    T020 --> T021
-    T020 --> T022
-
-    %% Phase 5: US3
-    T023[T023: 签名验证]
-    T024[T024: 扫码验证API]
-    T025[T025: 核销确认API]
-    T026[T026: 扫码页面]
-    T027[T027: 扫码样式]
-    T028[T028: 扫码路由]
-
-    T002 --> T023
-    T002 --> T024
-    T023 --> T024
-    T002 --> T025
-    T006 --> T025
-    T004 --> T026
-    T024 --> T026
-    T025 --> T026
-    T026 --> T027
-    T026 --> T028
-
-    %% Phase 6: US4
-    T029[T029: 订单列表API]
-    T030[T030: 订单详情API]
-    T031[T031: 订单卡片组件]
-    T032[T032: 订单列表页面]
-    T033[T033: 订单详情页面]
-    T034[T034: 订单样式]
-    T035[T035: 订单路由]
-    T036[T036: 订单入口]
-
-    T001 --> T029
-    T002 --> T029
-    T007 --> T029
-    T001 --> T030
-    T002 --> T030
-    T007 --> T030
-    T003 --> T031
-    T004 --> T032
-    T029 --> T032
-    T031 --> T032
-    T004 --> T033
-    T030 --> T033
-    T032 --> T034
-    T033 --> T034
-    T032 --> T035
-    T033 --> T035
-    T032 --> T036
-
-    %% Phase 7: US5
-    T037[T037: 订阅模板配置]
-    T038[T038: 订阅请求]
-    T039[T039: 订阅保存API]
-    T040[T040: 过期提醒定时]
-    T041[T041: 自动过期定时]
-    T042[T042: 过期标识]
-    T043[T043: 剩余时间]
-    T044[T044: crontab配置]
-
-    T004 --> T038
-    T037 --> T038
-    T002 --> T039
-    T007 --> T039
-    T007 --> T040
-    T039 --> T040
-    T001 --> T041
-    T002 --> T041
-    T011 --> T042
-    T020 --> T043
-    T040 --> T044
-    T041 --> T044
-
-    %% Phase 8: US6
-    T045[T045: 配送方式标识]
-    T046[T046: 跑腿占位]
-    T047[T047: 配送筛选]
-
-    T031 --> T045
-    T033 --> T046
-    T032 --> T047
-
-    %% Phase 9: Polish
-    T048[T048: 性能优化]
-
-    T047 --> T048
+## 📋 后端 API 汇总（供前端开发参考）
+
+### 核销券 API (`/api/voucher/*`)
+- **GET /api/voucher/lists** - 获取核销券列表（支持状态筛选、分页）
+  - 参数: `token`, `filter`, `page`, `limit`, `sort`, `order`
+  - 返回: 核销券列表（包含券码、类型、标题、状态、过期时间、门店信息等）
+
+- **GET /api/voucher/detail** - 获取核销券详情
+  - 参数: `token`, `id`
+  - 返回: 完整券信息（包含二维码数据、门店详情、订单信息等）
+
+### 订单 API (`/api/order/*`)
+- **GET /api/order/lists** - 获取订单列表（支持状态筛选、分页）
+  - 参数: `token`, `filter`, `page`, `limit`, `sort`, `order`
+  - 返回: 订单列表（包含订单号、金额、状态、门店名称、创建时间等）
+
+- **GET /api/order/detail** - 获取订单详情
+  - 参数: `token`, `id`
+  - 返回: 完整订单信息（包含商品详情、核销券信息、核销记录等）
+
+### 门店 API (`/api/store/*`)
+- **GET /api/store/lists** - 获取门店列表（支持地理位置排序）
+  - 参数: `token`, `filter`, `longitude`, `latitude`, `page`, `limit`
+  - 返回: 门店列表（包含名称、地址、距离、营业时间、电话等）
+
+- **GET /api/store/detail** - 获取门店详情
+  - 参数: `token`, `id`
+  - 返回: 门店详细信息
+
+**认证**: 所有 API 需要在 Header 或 Query 中传递 `token` 参数
+
+**响应格式**: FastAdmin 标准格式
+```typescript
+{
+  code: 1,           // 1=成功, 0/-1/-2/-3/-4=各类错误
+  msg: "操作成功",
+  time: 1736697600,  // Unix时间戳(秒)
+  data: { ... }      // 响应数据
+}
 ```
 
-## 并行执行建议
-
-### Phase 1 并行组
-可以同时开始的任务:
-- **Group 1-A**: T001(数据库) + T003(TS类型) + T005(工具函数)
-- **Group 1-B**: T002(后端控制器) + T006(Redis配置) [需等待T001完成]
-- **Group 1-C**: T004(API服务层) [需等待T003完成]
-
-### Phase 2 并行组
-- **Group 2-A**: T007(微信登录) + T009(地理位置)
-- **Group 2-B**: T008(Token管理) [需等待T007完成]
-
-### Phase 3 (US1) 并行组
-- **Group 3-A**: T010(列表API) + T011(卡片组件)
-- **Group 3-B**: T012(列表页面) [需等待T010+T011]
-- **Group 3-C**: T013(样式) + T014(路由) + T015(入口) [可同时进行]
-
-### Phase 4 (US2) 并行组
-- **Group 4-A**: T016(详情API) + T017(门店API) + T018(二维码组件) + T019(门店组件)
-- **Group 4-B**: T020(详情页面) [需等待4-A完成]
-- **Group 4-C**: T021(样式) + T022(路由) [可同时进行]
-
-### Phase 5 (US3) 并行组
-- **Group 5-A**: T023(签名验证) + T024(扫码验证API)
-- **Group 5-B**: T025(核销确认API) + T026(扫码页面) [部分并行]
-- **Group 5-C**: T027(样式) + T028(路由) [可同时进行]
-
-### Phase 6 (US4) 并行组
-- **Group 6-A**: T029(订单列表API) + T030(订单详情API) + T031(订单卡片)
-- **Group 6-B**: T032(列表页) + T033(详情页) [需等待6-A]
-- **Group 6-C**: T034(样式) + T035(路由) + T036(入口) [可同时进行]
-
-### Phase 7 (US5) 并行组
-- **Group 7-A**: T037(模板配置) + T038(订阅请求) + T039(保存API)
-- **Group 7-B**: T040(提醒定时) + T041(过期定时) [可并行]
-- **Group 7-C**: T042(过期标识) + T043(剩余时间) [可并行]
-- **Group 7-D**: T044(crontab) [需等待7-B]
-
-### Phase 8 (US6) 并行组
-- **Group 8-A**: T045(配送标识) + T046(跑腿占位) + T047(配送筛选) [可同时进行]
+**详细说明**: 参见 `specs/002-/contracts/*.yaml`
 
 ---
 
-## 实施建议
-
-### MVP交付 (最小可行产品)
-**范围**: User Story 1 (核销券列表查看)
-**任务**: T001-T015
-**时间**: ~18.5小时
-**里程碑**: 用户可以登录后查看核销券列表,按状态筛选
-
-### 第一次迭代 (核心价值)
-**范围**: US1 + US2 (列表+详情+二维码)
-**任务**: T001-T022
-**时间**: ~30小时
-**里程碑**: 用户可以查看券详情、二维码、可核销门店
-
-### 第二次迭代 (业务闭环)
-**范围**: US1 + US2 + US3 (加上核销操作)
-**任务**: T001-T028
-**时间**: ~42小时
-**里程碑**: 商家可以扫码核销,完整业务流程打通
-
-### 第三次迭代 (完整功能)
-**范围**: US1-US4 (加上订单记录)
-**任务**: T001-T036
-**时间**: ~54小时
-**里程碑**: 用户可以查看订单记录,关联核销券
-
-### 第四次迭代 (体验优化)
-**范围**: US1-US5 (加上有效期管理)
-**任务**: T001-T044
-**时间**: ~69小时
-**里程碑**: 自动提醒和过期管理
-
-### 最终交付 (全部功能)
-**范围**: US1-US6 + 优化
-**任务**: T001-T048
-**时间**: ~76小时
-**里程碑**: 所有功能完成,性能优化,预留跑腿入口
+## Format: `[ID] [P?] [Story] Description`
+- **[P]**: 可并行执行（不同文件，无依赖）
+- **[Story]**: 所属用户故事（US1, US2, US3...）
+- 路径基于 Taro 项目结构: `src/pages/`, `src/components/`, `src/types/`, `src/services/`
 
 ---
 
-## 质量保证
+## Phase 1: Setup (共享基础设施)
 
-### 代码规范
-- ✅ TypeScript严格模式,所有函数明确返回类型
-- ✅ React组件使用React.FC或返回React.ReactElement
-- ✅ BEM命名规范(CSS类名)
-- ✅ LESS语法(禁止SCSS特有功能)
-- ✅ 8px倍数间距
-- ✅ 使用NutUI组件和图标,禁止文本符号
-- ✅ 所有异步操作try-catch
-- ✅ 网络请求10秒超时
-- ✅ JSDoc注释(@param, @returns)
-- ✅ 常量UPPER_SNAKE_CASE命名
+**目的**: 项目初始化和基础结构
 
-### 性能指标
-- ✅ 核销券列表加载≤2秒(20条)
-- ✅ 二维码生成展示≤1.5秒
-- ✅ 商家扫码核销响应≤3秒
-- ✅ 支持5000并发用户
-- ✅ MySQL慢查询<100ms
-- ✅ Redis缓存命中率≥80%
+### T001: 创建 TypeScript 类型定义（前端）
+**文件**: `src/types/voucher.ts`, `src/types/order.ts`, `src/types/store.ts`, `src/types/writeoff.ts`
 
-### 安全要求
-- ✅ 二维码HMAC-SHA256签名
-- ✅ 时间戳防重放(24小时)
-- ✅ Redis分布式锁防并发核销
-- ✅ MySQL行锁(SELECT FOR UPDATE)
-- ✅ 数据库事务保证一致性
-- ✅ Token认证(FastAdmin Auth)
+创建核销券相关的 TypeScript 接口定义:
+- **voucher.ts**: `Voucher`, `VoucherListItem`, `VoucherStatus`, `VoucherType`
+- **order.ts**: `Order`, `OrderListItem`, `OrderStatus`
+- **store.ts**: `Store`, `StoreListItem`
+- **writeoff.ts**: `WriteOffRecord`
+
+基于 `specs/002-/contracts/*.yaml` 中的 schema 定义，映射为前端类型。
+
+**验收标准**:
+- ✅ 所有类型定义与 API 合约中的 schema 一致
+- ✅ 使用 TypeScript 严格类型（启用 strictNullChecks）
+- ✅ 枚举类型使用 TypeScript `enum` 或字符串字面量联合类型
+- ✅ 时间字段统一使用 `number`（Unix 时间戳秒）
+
+**依赖**: 无
+**估时**: 1.5h
 
 ---
 
-生成时间: 2025-10-12
-版本: 1.0.0
-生成工具: /speckit.tasks
+### T002: [P] 创建 API 服务层（前端）
+**文件**: `src/services/voucher.ts`, `src/services/order.ts`, `src/services/store.ts`
+
+实现前端 API 请求封装:
+- **voucher.ts**: `getVoucherList()`, `getVoucherDetail(id)`
+- **order.ts**: `getOrderList()`, `getOrderDetail(id)`
+- **store.ts**: `getStoreList()`, `getStoreDetail(id)`
+
+所有函数都需要:
+- 明确的返回类型（`Promise<ApiResponse<T>>`）
+- try-catch 错误处理
+- 10 秒超时保护
+- Token 自动注入（从 Taro.getStorageSync 读取）
+
+**验收标准**:
+- ✅ 所有函数有 JSDoc 注释和明确返回类型
+- ✅ 统一错误处理（网络超时、Token 失效等）
+- ✅ 使用 Taro.request 发起请求
+- ✅ 响应数据自动解析为类型化对象
+
+**依赖**: T001
+**估时**: 2.5h
+
+---
+
+### T003: [P] 创建工具函数（前端）
+**文件**: `src/utils/qrcode.ts`, `src/utils/location.ts`, `src/utils/date.ts`, `src/utils/error.ts`
+
+实现辅助工具:
+- **qrcode.ts**: `generateQRCode(data, canvas)` - 基于 Taro Canvas API 生成二维码
+- **location.ts**: `getCurrentLocation()`, `calculateDistance(lat1, lng1, lat2, lng2)` - 地理位置相关
+- **date.ts**: `formatTimestamp(ts)`, `getExpireDays(expireAt)`, `isExpiringSoon(expireAt)` - 时间处理
+- **error.ts**: `handleApiError(error)`, `showFriendlyError(error)` - 错误处理
+
+**验收标准**:
+- ✅ 所有函数有 JSDoc 注释和明确返回类型
+- ✅ qrcode.ts 使用 `weapp-qrcode-canvas-2d` 或 Taro 原生 Canvas
+- ✅ location.ts 使用 `Taro.getLocation` 并处理权限拒绝情况
+- ✅ error.ts 提供用户友好的错误提示文案
+
+**依赖**: T001
+**估时**: 2h
+
+---
+
+## Phase 2: Foundational (阻塞性前置任务)
+
+**目的**: 所有用户故事依赖的核心基础设施
+
+**⚠️ 关键**: 此阶段完成前，任何用户故事都无法开始实现
+
+### T004: 配置个人中心页面路由
+**文件**: `src/app.config.ts`, `src/pages/mine/index.tsx`
+
+在现有 `mine` 页面基础上扩展:
+- 在 `app.config.ts` 中添加子页面路由:
+  - `pages/voucher/list/index`
+  - `pages/voucher/detail/index`
+  - `pages/order/list/index`
+  - `pages/order/detail/index`
+
+**验收标准**:
+- ✅ 所有路由在 `app.config.ts` 中正确配置
+- ✅ 页面可通过 `Taro.navigateTo` 正常跳转
+
+**依赖**: 无
+**估时**: 0.5h
+
+---
+
+### T005: 实现 Token 管理和认证拦截
+**文件**: `src/utils/auth.ts`, `src/services/request.ts`
+
+创建统一的请求拦截器:
+- Token 自动注入到请求头或 Query 参数
+- Token 失效自动跳转登录页
+- 网络错误统一处理和提示
+
+**验收标准**:
+- ✅ 所有 API 请求自动携带 Token
+- ✅ 收到 `-2` 错误码（未授权）时自动跳转登录
+- ✅ 网络超时显示友好提示
+
+**依赖**: T002
+**估时**: 1.5h
+
+---
+
+### T006: 实现地理位置获取和权限处理
+**文件**: `src/utils/location.ts`
+
+完善地理位置工具:
+- 使用 `Taro.getLocation` 获取当前位置
+- 处理权限未授权情况（降级为不显示距离）
+- 缓存位置信息（5 分钟有效期）
+
+**验收标准**:
+- ✅ 首次调用请求用户授权位置权限
+- ✅ 授权拒绝不阻塞页面加载
+- ✅ 位置信息缓存到 Storage，5 分钟内复用
+
+**依赖**: T003
+**估时**: 1h
+
+---
+
+**Checkpoint**: ✅ 基础设施就绪 - 用户故事实现可以开始
+
+---
+
+## Phase 3: User Story 1 - 查看核销券列表 (Priority: P1) 🎯 MVP
+
+**目标**: 用户可以在个人中心查看核销券列表，按状态筛选，了解券的基本信息和当前状态。
+
+**独立测试**: 创建测试 Token 和测试券数据，访问个人中心，检查是否正确显示核销券列表、状态筛选、分页加载功能。
+
+---
+
+### T007: [P] [US1] 创建核销券卡片组件（前端）
+**文件**: `src/components/VoucherCard/index.tsx`, `src/components/VoucherCard/index.less`
+
+创建可复用的核销券卡片组件:
+- 显示商品图片、名称、规格、购买数量
+- 显示购买时间（格式化为 "YYYY-MM-DD HH:mm"）
+- 显示当前状态（待核销/已核销/已过期，不同颜色标识）
+- 即将过期的券显示"即将过期"标签（剩余 7 天内）
+- 点击卡片可跳转到详情页
+
+使用 NutUI 的 `<Card>` 组件作为基础。
+
+**验收标准**:
+- ✅ 组件接收 `VoucherListItem` 类型的 Props
+- ✅ 使用 BEM 命名规范（`.voucher-card`, `.voucher-card__title` 等）
+- ✅ 状态徽章使用 NutUI 的 `<Tag>` 组件
+- ✅ 即将过期标签使用醒目颜色（如橙色）
+- ✅ 组件有 JSDoc 注释
+
+**依赖**: T001, T003 (date.ts)
+**估时**: 2h
+
+---
+
+### T008: [US1] 实现核销券列表页面（前端）
+**文件**: `src/pages/voucher/list/index.tsx`, `src/pages/voucher/list/index.less`, `src/pages/voucher/list/index.config.ts`
+
+实现核销券列表页面:
+- 顶部状态筛选 Tab（全部/待核销/已核销/已过期），使用 NutUI `<Tabs>`
+- 核销券列表展示（使用 `<VoucherCard>` 组件）
+- 下拉刷新（使用 NutUI `<PullToRefresh>`）
+- 滚动加载更多（分页，每页 20 条）
+- 空状态提示（无券时显示提示和跳转按钮）
+- 加载状态（骨架屏）
+
+**验收标准**:
+- ✅ 页面标题为"我的核销券"
+- ✅ Tab 切换时调用 API 并传递 `filter` 参数
+- ✅ 首屏加载时间 < 2 秒
+- ✅ 下拉刷新重新加载第一页数据
+- ✅ 滚动到底部自动加载下一页
+- ✅ 空状态显示"暂无核销券，去商城逛逛吧"并提供跳转
+
+**依赖**: T002, T007
+**估时**: 4h
+
+---
+
+### T009: [US1] 优化核销券列表性能（前端）
+**文件**: `src/pages/voucher/list/index.tsx`
+
+优化列表渲染性能:
+- 使用 `React.memo` 包装 `<VoucherCard>` 组件
+- 避免列表项 key 使用 index，使用券 ID
+- 防抖 Tab 切换和搜索操作
+
+**验收标准**:
+- ✅ `<VoucherCard>` 使用 `React.memo` 包装
+- ✅ 列表项使用 `voucher.id` 作为 key
+- ✅ Tab 切换添加 300ms 防抖
+
+**依赖**: T008
+**估时**: 1h
+
+---
+
+**Checkpoint**: ✅ 用户故事 1 完成 - 用户可以查看和筛选核销券列表
+
+---
+
+## Phase 4: User Story 2 - 查看核销券详情及二维码 (Priority: P1)
+
+**目标**: 用户可以查看核销券详情、核销二维码、可核销门店列表，并保存二维码到相册。
+
+**独立测试**: 点击任意待核销券，检查详情页是否显示完整信息（商品信息、订单信息、二维码、门店列表），验证二维码可扫描识别。
+
+---
+
+### T010: [P] [US2] 创建二维码组件（前端）
+**文件**: `src/components/VoucherQRCode/index.tsx`, `src/components/VoucherQRCode/index.less`
+
+创建核销券二维码展示组件:
+- 使用 Canvas 生成二维码（基于 T003 的 `qrcode.ts`）
+- 显示核销码文本（券 ID）
+- 已核销/已过期状态显示灰色二维码或水印
+- 提供"保存到相册"按钮
+
+使用 `weapp-qrcode-canvas-2d` 或 Taro 原生 Canvas API。
+
+**验收标准**:
+- ✅ 二维码生成时间 < 1.5 秒
+- ✅ 二维码清晰可扫描（测试识别率 > 99%）
+- ✅ 已核销/已过期券显示灰色水印
+- ✅ 保存到相册成功后显示 Toast 提示
+- ✅ 二维码生成失败显示降级文本（券码）
+
+**依赖**: T001, T003 (qrcode.ts)
+**估时**: 3h
+
+---
+
+### T011: [P] [US2] 创建门店列表组件（前端）
+**文件**: `src/components/StoreList/index.tsx`, `src/components/StoreList/index.less`
+
+创建可核销门店列表组件:
+- 显示门店名称、地址、距离、营业时间、电话
+- 点击地址打开地图导航（`Taro.openLocation`）
+- 点击电话拨打（`Taro.makePhoneCall`）
+- 按距离排序（如果有地理位置权限）
+
+使用 NutUI 的 `<Cell>` 或 `<Card>` 组件。
+
+**验收标准**:
+- ✅ 组件接收 `StoreListItem[]` 类型的 Props
+- ✅ 有地理位置时显示距离（如 "1.2km"）
+- ✅ 无地理位置时距离显示为 "--"
+- ✅ 点击地址成功打开地图应用
+- ✅ 点击电话成功拨打
+
+**依赖**: T001, T002 (store.ts), T006
+**估时**: 2.5h
+
+---
+
+### T012: [US2] 实现核销券详情页面（前端）
+**文件**: `src/pages/voucher/detail/index.tsx`, `src/pages/voucher/detail/index.less`, `src/pages/voucher/detail/index.config.ts`
+
+实现核销券详情页面:
+- 顶部显示商品信息（图片、名称、规格、分类）
+- 订单信息（订单号、购买时间、支付金额）
+- 核销二维码（使用 `<VoucherQRCode>` 组件）
+- 有效期提示（剩余天数或具体过期日期）
+- 可核销门店列表（使用 `<StoreList>` 组件）
+- 已核销券显示核销时间和核销门店
+- 地区限制提示（"仅限XX地区使用"）
+
+**验收标准**:
+- ✅ 页面通过 Query 参数接收券 ID (`id`)
+- ✅ 页面加载时调用 `/api/voucher/detail` 获取详情
+- ✅ 商品图片使用懒加载
+- ✅ 待核销券显示剩余有效天数
+- ✅ 已核销券显示核销记录
+- ✅ 门店列表按距离排序（有权限时）
+
+**依赖**: T002, T010, T011
+**估时**: 4h
+
+---
+
+### T013: [US2] 实现二维码保存功能（前端）
+**文件**: `src/components/VoucherQRCode/index.tsx`
+
+实现二维码保存到相册:
+- 使用 `Taro.canvasToTempFilePath` 将 Canvas 转为图片
+- 使用 `Taro.saveImageToPhotosAlbum` 保存到相册
+- 处理相册权限（首次使用需授权）
+- 保存成功/失败提示
+
+**验收标准**:
+- ✅ 点击"保存到相册"按钮触发保存
+- ✅ 首次使用时请求相册权限
+- ✅ 保存成功显示 "已保存到相册"
+- ✅ 保存失败显示友好错误提示
+
+**依赖**: T010
+**估时**: 1.5h
+
+---
+
+**Checkpoint**: ✅ 用户故事 2 完成 - 用户可以查看券详情、二维码、门店列表并保存二维码
+
+---
+
+## Phase 5: User Story 3 - 门店核销操作 (Priority: P2)
+
+**目标**: 商家扫描用户二维码后，系统验证券有效性并完成核销，更新券状态。
+
+**独立测试**: 商家扫描测试二维码，验证系统是否正确识别券信息、检查状态、完成核销并实时更新用户端显示。
+
+**注**: 本用户故事涉及商家端扫码功能。如果商家端是独立应用，此部分可能在商家端项目中实现。以下任务假设在同一个小程序中提供商家扫码入口。
+
+---
+
+### T014: [US3] 创建商家扫码页面（前端）
+**文件**: `src/pages/merchant-scan/index.tsx`, `src/pages/merchant-scan/index.less`, `src/pages/merchant-scan/index.config.ts`
+
+实现商家扫码核销页面:
+- 使用 `Taro.scanCode` 调用扫码功能
+- 扫码后解析券码，调用 `/api/voucher/detail` 验证券信息
+- 显示券详情（商品名称、规格、数量、用户信息）
+- 显示"确认核销"按钮
+- 核销成功后显示成功提示，并更新券状态
+
+**验收标准**:
+- ✅ 页面标题为"扫码核销"
+- ✅ 点击"扫一扫"按钮打开扫码
+- ✅ 扫码后正确解析券 ID
+- ✅ 显示券详情供商家确认
+- ✅ 点击"确认核销"调用核销 API
+- ✅ 已核销/已过期券显示相应提示，禁止核销
+
+**依赖**: T002
+**估时**: 3h
+
+**注**: 如果商家端是独立系统，此任务可调整为"前端监听券状态变化并实时更新"。
+
+---
+
+### T015: [US3] 实现核销状态实时同步（前端）
+**文件**: `src/pages/voucher/detail/index.tsx`, `src/pages/voucher/list/index.tsx`
+
+实现核销后的状态同步:
+- 券详情页在商家核销后自动刷新状态
+- 券列表页返回时刷新数据，显示最新状态
+- 可选：使用轮询或 WebSocket 实时监听状态变化
+
+**验收标准**:
+- ✅ 券核销后，详情页状态自动更新为"已核销"
+- ✅ 返回列表页时刷新数据
+- ✅ 无需用户手动刷新即可看到最新状态
+
+**依赖**: T012, T014
+**估时**: 2h
+
+---
+
+**Checkpoint**: ✅ 用户故事 3 完成 - 商家可以扫码核销，用户端实时同步状态
+
+---
+
+## Phase 6: User Story 4 - 订单记录查询 (Priority: P2)
+
+**目标**: 用户可以查看完整的购买订单记录，包括订单详情，并从订单跳转到关联的核销券。
+
+**独立测试**: 创建多个测试订单，检查订单列表是否正确显示所有订单信息，验证订单详情页展示完整信息。
+
+---
+
+### T016: [P] [US4] 创建订单卡片组件（前端）
+**文件**: `src/components/OrderCard/index.tsx`, `src/components/OrderCard/index.less`
+
+创建可复用的订单卡片组件:
+- 显示商品缩略图、名称、购买数量
+- 显示订单号、支付金额、订单状态、购买时间
+- 配送方式标识（核销自提/跑腿配送）
+- 点击卡片跳转到订单详情
+
+使用 NutUI 的 `<Card>` 组件。
+
+**验收标准**:
+- ✅ 组件接收 `OrderListItem` 类型的 Props
+- ✅ 使用 BEM 命名规范
+- ✅ 状态徽章使用不同颜色区分
+- ✅ 配送方式标识清晰可见
+
+**依赖**: T001
+**估时**: 2h
+
+---
+
+### T017: [US4] 实现订单列表页面（前端）
+**文件**: `src/pages/order/list/index.tsx`, `src/pages/order/list/index.less`, `src/pages/order/list/index.config.ts`
+
+实现订单列表页面:
+- 显示所有订单（使用 `<OrderCard>` 组件）
+- 下拉刷新
+- 滚动加载更多（分页，每页 20 条）
+- 空状态提示
+- 加载状态（骨架屏）
+
+**验收标准**:
+- ✅ 页面标题为"我的订单"
+- ✅ 订单按购买时间倒序排列
+- ✅ 下拉刷新重新加载第一页数据
+- ✅ 滚动到底部自动加载下一页
+- ✅ 空状态显示"暂无订单"
+
+**依赖**: T002, T016
+**估时**: 3h
+
+---
+
+### T018: [US4] 实现订单详情页面（前端）
+**文件**: `src/pages/order/detail/index.tsx`, `src/pages/order/detail/index.less`, `src/pages/order/detail/index.config.ts`
+
+实现订单详情页面:
+- 显示订单号、商品详情、数量、单价、总价
+- 显示支付方式、支付时间
+- 已完成订单显示"查看核销券"按钮，点击跳转到券详情
+- 跑腿配送订单显示收货地址（占位）
+
+**验收标准**:
+- ✅ 页面通过 Query 参数接收订单 ID (`id`)
+- ✅ 页面加载时调用 `/api/order/detail` 获取详情
+- ✅ 已完成订单显示核销券信息和跳转按钮
+- ✅ 订单信息完整准确
+
+**依赖**: T002
+**估时**: 3h
+
+---
+
+### T019: [US4] 在个人中心添加订单入口（前端）
+**文件**: `src/pages/mine/index.tsx`, `src/pages/mine/index.less`
+
+在个人中心页面添加"我的订单"入口:
+- 使用 NutUI 的 `<Cell>` 或 `<Grid>` 组件
+- 显示图标（使用 `@nutui/icons-react-taro` 的 `<Order>` 图标）
+- 点击跳转到订单列表页面
+
+**验收标准**:
+- ✅ 个人中心显示"我的订单"入口
+- ✅ 使用 NutUI 图标，不使用文本符号
+- ✅ 点击跳转到 `/pages/order/list/index`
+
+**依赖**: T017
+**估时**: 0.5h
+
+---
+
+**Checkpoint**: ✅ 用户故事 4 完成 - 用户可以查看订单记录并跳转到核销券
+
+---
+
+## Phase 7: User Story 5 - 核销券有效期管理 (Priority: P3)
+
+**目标**: 系统自动管理核销券有效期，提醒用户即将过期的券，过期后自动更新状态。
+
+**独立测试**: 创建不同有效期的测试券，验证系统是否正确发送过期提醒、更新过期状态、在列表中正确标识即将过期的券。
+
+**注**: 过期提醒和定时任务由后端负责，前端负责显示提醒信息和过期状态。
+
+---
+
+### T020: [US5] 实现过期提醒显示（前端）
+**文件**: `src/pages/voucher/list/index.tsx`, `src/components/VoucherCard/index.tsx`
+
+在核销券列表和卡片中显示过期提醒:
+- 即将过期的券（剩余 7 天内）显示"即将过期"标签
+- 标签使用醒目颜色（橙色或红色）
+- 已过期券显示"已过期"标签
+
+**验收标准**:
+- ✅ 调用 `isExpiringSoon(expireAt)` 判断是否即将过期
+- ✅ 即将过期券显示橙色/红色标签
+- ✅ 已过期券显示灰色标签
+
+**依赖**: T003 (date.ts), T007
+**估时**: 1h
+
+---
+
+### T021: [US5] 实现有效期倒计时显示（前端）
+**文件**: `src/pages/voucher/detail/index.tsx`
+
+在核销券详情页显示有效期信息:
+- 待核销券显示剩余天数（"剩余 X 天"）
+- 剩余 3 天内用醒目颜色提示
+- 已过期券显示过期时间
+
+**验收标准**:
+- ✅ 调用 `getExpireDays(expireAt)` 计算剩余天数
+- ✅ 剩余 3 天内显示红色警告
+- ✅ 已过期显示"已于 YYYY-MM-DD 过期"
+
+**依赖**: T003 (date.ts), T012
+**估时**: 1h
+
+---
+
+### T022: [US5] 接收过期提醒通知（前端）
+**文件**: `src/app.tsx`（应用入口）
+
+实现接收后端推送的过期提醒通知:
+- 监听微信订阅消息
+- 显示提醒通知（小程序原生通知或页面内提示）
+- 点击通知跳转到核销券列表
+
+**验收标准**:
+- ✅ 应用启动时检查是否有新的过期提醒
+- ✅ 收到提醒时显示通知（微信订阅消息或页面 Toast）
+- ✅ 点击通知跳转到相应券详情
+
+**依赖**: T008
+**估时**: 2h
+
+**注**: 此任务需要后端配合实现订阅消息推送。
+
+---
+
+**Checkpoint**: ✅ 用户故事 5 完成 - 用户可以看到过期提醒并及时使用券
+
+---
+
+## Phase 8: User Story 6 - 跑腿配送模式入口预留 (Priority: P3)
+
+**目标**: 为未来的跑腿配送功能预留 UI 入口和基础交互界面，当前阶段只展示占位界面。
+
+**独立测试**: 访问订单详情页面，验证跑腿配送订单是否显示基础占位界面和"敬请期待"提示。
+
+---
+
+### T023: [US6] 在订单列表显示配送方式标识（前端）
+**文件**: `src/components/OrderCard/index.tsx`
+
+在订单卡片中显示配送方式:
+- 核销自提显示"核销自提"标识
+- 跑腿配送显示"跑腿配送"标识
+- 使用不同图标或颜色区分
+
+**验收标准**:
+- ✅ 订单卡片根据 `deliveryMode` 字段显示相应标识
+- ✅ 配送方式标识清晰可见
+
+**依赖**: T016
+**估时**: 0.5h
+
+---
+
+### T024: [US6] 在订单详情显示配送占位界面（前端）
+**文件**: `src/pages/order/detail/index.tsx`
+
+跑腿配送订单详情页显示占位信息:
+- 显示收货地址（基本信息）
+- 显示"配送功能开发中，敬请期待"提示
+- 使用 NutUI 的 `<Empty>` 组件展示占位状态
+
+**验收标准**:
+- ✅ 跑腿配送订单显示收货地址
+- ✅ 显示占位提示文案
+- ✅ 占位界面美观友好
+
+**依赖**: T018
+**估时**: 1h
+
+---
+
+### T025: [US6] 预留配送方式筛选（前端，可选）
+**文件**: `src/pages/order/list/index.tsx`
+
+在订单列表添加配送方式筛选（占位）:
+- 添加筛选 Tab（全部/核销自提/跑腿配送）
+- "跑腿配送" Tab 显示为灰色或标注"即将上线"
+- 点击提示"功能开发中"
+
+**验收标准**:
+- ✅ 筛选 Tab 包含"跑腿配送"选项
+- ✅ 跑腿配送 Tab 显示灰色或"即将上线"标识
+- ✅ 点击提示功能未开放
+
+**依赖**: T017
+**估时**: 0.5h
+
+---
+
+**Checkpoint**: ✅ 用户故事 6 完成 - 跑腿配送入口已预留，未来可平滑扩展
+
+---
+
+## Phase 9: Polish & Cross-Cutting Concerns
+
+**目的**: 优化和完善，影响多个用户故事的横切关注点
+
+---
+
+### T026: [P] 性能优化 - 列表虚拟滚动（前端，可选）
+**文件**: `src/pages/voucher/list/index.tsx`, `src/pages/order/list/index.tsx`
+
+如果列表长度超过 50 条，使用 Taro VirtualList 优化:
+- 评估实际列表长度
+- 如需要，引入 `@tarojs/components` 的 `<VirtualList>`
+- 优化列表渲染性能
+
+**验收标准**:
+- ✅ 列表长度 >= 50 时使用虚拟滚动
+- ✅ 滚动流畅，无明显卡顿
+
+**依赖**: T008, T017
+**估时**: 2h
+
+---
+
+### T027: [P] 错误处理完善（前端）
+**文件**: `src/utils/error.ts`, 所有页面文件
+
+完善全局错误处理:
+- 网络超时显示"网络请求超时，请稍后重试"
+- Token 失效自动跳转登录
+- API 错误显示友好提示（根据 `code` 字段）
+- 提供"重试"按钮
+
+**验收标准**:
+- ✅ 所有 API 调用都有 try-catch 包裹
+- ✅ 错误提示用户友好
+- ✅ 关键操作提供重试按钮
+
+**依赖**: T002, T003
+**估时**: 2h
+
+---
+
+### T028: [P] 无障碍优化（前端，可选）
+**文件**: 所有组件和页面
+
+优化无障碍访问:
+- 所有按钮添加 `aria-label`
+- 图片添加 `alt` 属性
+- 交互元素可通过键盘访问
+
+**验收标准**:
+- ✅ 关键按钮有 `aria-label`
+- ✅ 图片有描述性 `alt` 文本
+
+**依赖**: 所有页面和组件
+**估时**: 2h
+
+---
+
+### T029: [P] 代码文档和注释完善（前端）
+**文件**: 所有 TypeScript 文件
+
+完善代码文档:
+- 所有导出函数有 JSDoc 注释
+- 复杂逻辑添加行内注释
+- README.md 添加模块说明
+
+**验收标准**:
+- ✅ 所有导出函数有 JSDoc
+- ✅ 复杂逻辑有注释说明
+
+**依赖**: 所有任务
+**估时**: 2h
+
+---
+
+## Dependencies & Execution Order
+
+### Phase Dependencies
+
+- **Setup (Phase 1)**: 无依赖 - 可立即开始
+- **Foundational (Phase 2)**: 依赖 Setup 完成 - **阻塞所有用户故事**
+- **User Stories (Phase 3+)**: 所有依赖 Foundational 完成
+  - 用户故事之间基本独立，可并行开发（如有多人）
+  - 或按优先级顺序开发（P1 → P2 → P3）
+- **Polish (Phase 9)**: 依赖所有用户故事完成
+
+### User Story Dependencies
+
+- **User Story 1 (P1)**: Foundational 完成后可开始 - 无其他故事依赖
+- **User Story 2 (P1)**: Foundational 完成后可开始 - 无其他故事依赖
+- **User Story 3 (P2)**: Foundational 完成后可开始 - 可选依赖 US2（扫码后跳转到券详情）
+- **User Story 4 (P2)**: Foundational 完成后可开始 - 可选依赖 US1（订单跳转到券列表）
+- **User Story 5 (P3)**: 依赖 US1（列表显示过期提醒）和 US2（详情显示倒计时）
+- **User Story 6 (P3)**: 依赖 US4（订单列表和详情）
+
+### Within Each User Story
+
+- 组件优先于页面（如 T007 VoucherCard 优先于 T008 列表页）
+- 工具函数优先于组件（如 T003 工具函数优先于 T010 二维码组件）
+- 核心实现优先于优化（如 T012 详情页优先于 T013 保存功能）
+
+### Parallel Opportunities
+
+- **Phase 1 Setup**: T002、T003 可并行（不同文件）
+- **Phase 3 US1**: T007 VoucherCard 和其他 US1 组件可并行
+- **Phase 4 US2**: T010 二维码组件和 T011 门店列表组件可并行
+- **Phase 6 US4**: T016 OrderCard 可与其他任务并行
+- **Phase 9 Polish**: 所有 [P] 标记的优化任务可并行
+
+---
+
+## Implementation Strategy
+
+### MVP First (User Story 1 + 2 Only) 🎯
+
+1. 完成 Phase 1: Setup（~6h）
+2. 完成 Phase 2: Foundational（~3h）
+3. 完成 Phase 3: User Story 1（~7h）
+4. 完成 Phase 4: User Story 2（~11h）
+5. **STOP and VALIDATE**: 测试核销券列表和详情功能
+6. 部署/演示（用户可查看券、查看详情、查看二维码、查看门店）
+
+**MVP 总估时**: ~27 小时
+
+### Incremental Delivery
+
+1. **Iteration 1**: Setup + Foundational → 基础就绪（~9h）
+2. **Iteration 2**: + User Story 1 → 可查看券列表（~16h）
+3. **Iteration 3**: + User Story 2 → 可查看详情和二维码（~27h，**MVP 完成**）
+4. **Iteration 4**: + User Story 3 → 可商家扫码核销（~32h）
+5. **Iteration 5**: + User Story 4 → 可查看订单记录（~38.5h）
+6. **Iteration 6**: + User Story 5 → 过期提醒（~42.5h）
+7. **Iteration 7**: + User Story 6 → 配送占位（~44.5h）
+8. **Iteration 8**: + Polish → 性能优化和完善（~52.5h）
+
+每个迭代都交付一个可独立测试和演示的增量功能。
+
+### Parallel Team Strategy
+
+如果有多个前端开发者:
+
+1. 所有人一起完成 Setup + Foundational（~9h）
+2. 一旦 Foundational 完成:
+   - **开发者 A**: User Story 1（核销券列表）
+   - **开发者 B**: User Story 2（券详情和二维码）
+   - **开发者 C**: User Story 4（订单记录）
+3. 各故事完成后独立测试并集成
+
+---
+
+## Summary
+
+**总任务数**: 29 个任务
+**总估时**: ~52.5 小时
+
+### 任务分布
+
+- **Phase 1 (Setup)**: 3 个任务，~6h
+- **Phase 2 (Foundational)**: 3 个任务，~3h
+- **Phase 3 (US1 - 核销券列表)**: 3 个任务，~7h 🎯 P1
+- **Phase 4 (US2 - 券详情和二维码)**: 4 个任务，~11h 🎯 P1
+- **Phase 5 (US3 - 商家扫码核销)**: 2 个任务，~5h (P2)
+- **Phase 6 (US4 - 订单记录查询)**: 4 个任务，~6.5h (P2)
+- **Phase 7 (US5 - 过期提醒)**: 3 个任务，~4h (P3)
+- **Phase 8 (US6 - 配送占位)**: 3 个任务，~2h (P3)
+- **Phase 9 (Polish)**: 4 个任务，~8h
+
+### 并行机会
+
+- Setup 阶段: T002、T003 可并行
+- US1: T007 可与其他组件并行
+- US2: T010、T011 可并行
+- US4: T016 可并行
+- Polish: T026-T029 可并行
+
+### MVP 范围
+
+**推荐 MVP**: User Story 1 + User Story 2
+- 用户可以查看核销券列表
+- 用户可以查看券详情和二维码
+- 用户可以查看可核销门店列表
+- **估时**: ~27 小时
+
+---
+
+## Notes
+
+- **[P]** = 可并行执行（不同文件，无依赖）
+- **[Story]** = 所属用户故事（US1-US6），便于追溯
+- **后端 API**: 由后端团队负责实现，前端参考 `specs/002-/contracts/*.yaml`
+- **所有函数必须有明确返回类型**（遵循项目 constitution.md）
+- **使用 NutUI 组件库**，不使用文本符号作为图标
+- **BEM 命名规范**: `.block`, `.block__element`, `.block--modifier`
+- **错误处理**: 所有异步操作必须 try-catch，10 秒超时保护
+- **每个任务完成后提交 Git**，遵循 Conventional Commits 规范
+- **每个 Checkpoint 完成后独立测试**，确保功能可用
+
+---
+
+**生成时间**: 2025-10-12
+**版本**: 2.0.0（前端专注版本）
+**生成工具**: /speckit.tasks
+**备注**: 本版本移除了所有后端实现任务，保留 API 列表汇总供前端开发参考。后端 API 由后端团队独立开发。
