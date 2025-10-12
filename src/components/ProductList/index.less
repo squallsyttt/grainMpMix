@@ -53,22 +53,23 @@
 
     // 2列网格
     &--2-columns {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     // 3列网格
     &--3-columns {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     // 4列网格
     &--4-columns {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
   &__grid-item {
     width: 100%;
+    min-width: 0; // 允许内容压缩，避免撑开列宽度
   }
 
   // 列表布局
