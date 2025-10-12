@@ -119,7 +119,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Text className="product-card__name">{product.name}</Text>
 
           {/* 商品标签 */}
-          {showTags && product.tags.length > 0 && (
+          {showTags && product.tags && product.tags.length > 0 && (
             <View className="product-card__tags">
               {product.tags.slice(0, 2).map((tag, index) => (
                 <Tag key={index} type="primary" size="small" plain>
@@ -202,7 +202,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Text className="product-card__desc">{product.description}</Text>
 
           {/* 商品标签 */}
-          {showTags && product.tags.length > 0 && (
+          {showTags && product.tags && product.tags.length > 0 && (
             <View className="product-card__tags">
               {product.tags.slice(0, 3).map((tag, index) => (
                 <Tag key={index} type="primary" size="small" plain>

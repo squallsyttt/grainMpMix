@@ -157,7 +157,7 @@ const ProductDetail: React.FC = () => {
           autoplay={false}
           onChange={handleSwiperChange}
         >
-          {product.images.map((image, index) => (
+          {(product.images || []).map((image, index) => (
             <SwiperItem key={index}>
               <Image
                 className="product-detail__image"
@@ -170,7 +170,7 @@ const ProductDetail: React.FC = () => {
 
         {/* 图片指示器 */}
         <View className="product-detail__indicator">
-          {currentImageIndex + 1} / {product.images.length}
+          {currentImageIndex + 1} / {(product.images || []).length}
         </View>
       </View>
 
@@ -202,7 +202,7 @@ const ProductDetail: React.FC = () => {
         <Text className="product-detail__name">{product.name}</Text>
 
         {/* 商品标签 */}
-        {product.tags.length > 0 && (
+        {product.tags && product.tags.length > 0 && (
           <View className="product-detail__tags">
             {product.tags.map((tag, index) => (
               <Tag key={index} type="primary" size="small" plain>
