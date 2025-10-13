@@ -17,9 +17,9 @@ import { Empty, Skeleton, Button } from '@nutui/nutui-react-taro'
 import { ArrowRight } from '@nutui/icons-react-taro'
 import { useUser } from '@/contexts/UserContext'
 import VoucherStatsCard from '@/components/VoucherStatsCard'
-import { getVoucherStats, getRecentVouchers } from '@/services/user'
-import { VoucherStats } from '@/types/stats'
-import { RecentVoucher } from '@/types/recent'
+import { getVoucherStats, getRecentVouchers, getOrderStats, getRecentOrders } from '@/services/user'
+import { VoucherStats, OrderStats } from '@/types/stats'
+import { RecentVoucher, RecentOrder } from '@/types/recent'
 import './index.less'
 
 /**
@@ -28,9 +28,12 @@ import './index.less'
 function Mine(): React.ReactElement {
   const { userInfo, isLoggedIn } = useUser()
   const [voucherStats, setVoucherStats] = useState<VoucherStats | null>(null)
+  const [orderStats, setOrderStats] = useState<OrderStats | null>(null)
   const [recentVouchers, setRecentVouchers] = useState<RecentVoucher[]>([])
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [vouchersLoading, setVouchersLoading] = useState<boolean>(true)
+  const [ordersLoading, setOrdersLoading] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
 
   /**
@@ -83,11 +86,46 @@ function Mine(): React.ReactElement {
   }, [])
 
   /**
+   * 加载订单统计数据
+   */
+  const loadOrderStats = useCallback(async () => {
+    try {
+      const stats = await getOrderStats()
+      if (stats) {
+        setOrderStats(stats)
+      }
+    } catch (err) {
+      console.error('[MinePage] 加载订单统计失败:', err)
+    }
+  }, [])
+
+  /**
+   * 加载最近订单列表
+   */
+  const loadRecentOrders = useCallback(async () => {
+    try {
+      setOrdersLoading(true)
+
+      const orders = await getRecentOrders(3)
+      setRecentOrders(orders)
+    } catch (err) {
+      console.error('[MinePage] 加载最近订单失败:', err)
+    } finally {
+      setOrdersLoading(false)
+    }
+  }, [])
+
+  /**
    * 加载所有数据
    */
   const loadAllData = useCallback(async () => {
-    await Promise.all([loadVoucherStats(), loadRecentVouchers()])
-  }, [loadVoucherStats, loadRecentVouchers])
+    await Promise.all([
+      loadVoucherStats(),
+      loadRecentVouchers(),
+      loadOrderStats(),
+      loadRecentOrders()
+    ])
+  }, [loadVoucherStats, loadRecentVouchers, loadOrderStats, loadRecentOrders])
 
   /**
    * 页面初始化
@@ -98,6 +136,7 @@ function Mine(): React.ReactElement {
     } else {
       setLoading(false)
       setVouchersLoading(false)
+      setOrdersLoading(false)
     }
   }, [isLoggedIn, loadAllData])
 
@@ -132,6 +171,24 @@ function Mine(): React.ReactElement {
   const handleViewAllVouchers = useCallback(() => {
     Taro.navigateTo({
       url: '/pages/voucher/list/index?status=pending'
+    })
+  }, [])
+
+  /**
+   * 处理订单统计入口点击
+   */
+  const handleOrdersClick = useCallback(() => {
+    Taro.navigateTo({
+      url: '/pages/order/list/index'
+    })
+  }, [])
+
+  /**
+   * 处理订单卡片点击
+   */
+  const handleOrderClick = useCallback((order: RecentOrder) => {
+    Taro.navigateTo({
+      url: `/pages/order/detail/index?id=${order.id}`
     })
   }, [])
 
@@ -172,6 +229,22 @@ function Mine(): React.ReactElement {
         loading={loading}
         onRetry={error ? handleRetry : undefined}
       />
+
+      {/* 订单统计入口 */}
+      <View className="mine-page__order-entry" onClick={handleOrdersClick}>
+        <View className="mine-page__order-entry-content">
+          <Text className="mine-page__order-entry-title">我的订单</Text>
+          {orderStats && orderStats.total > 0 && (
+            <Text className="mine-page__order-entry-count">共 {orderStats.total} 单</Text>
+          )}
+        </View>
+        <View className="mine-page__order-entry-action">
+          {orderStats && orderStats.pending > 0 && (
+            <View className="mine-page__order-entry-badge">{orderStats.pending}</View>
+          )}
+          <ArrowRight size={16} color="#999" />
+        </View>
+      </View>
 
       {/* 最近核销券列表 */}
       <View className="mine-page__recent-section">
@@ -242,6 +315,78 @@ function Mine(): React.ReactElement {
               style={{ marginTop: '16px' }}
             >
               查看已核销券
+            </Button>
+          </View>
+        )}
+      </View>
+
+      {/* 最近订单列表 */}
+      <View className="mine-page__recent-section">
+        <View className="mine-page__section-header">
+          <Text className="mine-page__section-title">最近订单</Text>
+          {!ordersLoading && recentOrders.length > 0 && (
+            <View className="mine-page__view-all" onClick={handleOrdersClick}>
+              <Text className="mine-page__view-all-text">查看全部</Text>
+              <ArrowRight size={14} color="#999" />
+            </View>
+          )}
+        </View>
+
+        {/* 骨架屏加载 */}
+        {ordersLoading && (
+          <View className="mine-page__voucher-list">
+            {[1, 2, 3].map((item) => (
+              <View key={item} className="mine-page__voucher-skeleton">
+                <Skeleton width="80px" height="80px" animated />
+                <View className="mine-page__voucher-skeleton-content">
+                  <Skeleton width="60%" height="20px" animated />
+                  <Skeleton width="40%" height="16px" animated style={{ marginTop: '8px' }} />
+                  <Skeleton width="50%" height="14px" animated style={{ marginTop: '8px' }} />
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* 订单列表 */}
+        {!ordersLoading && recentOrders.length > 0 && (
+          <View className="mine-page__voucher-list">
+            {recentOrders.map((order) => (
+              <View
+                key={order.id}
+                className="mine-page__voucher-item"
+                onClick={() => handleOrderClick(order)}
+              >
+                <Image
+                  className="mine-page__voucher-image"
+                  src={order.productImage}
+                  mode="aspectFill"
+                  lazyLoad
+                />
+                <View className="mine-page__voucher-content">
+                  <Text className="mine-page__voucher-title">订单号: {order.orderNo}</Text>
+                  <Text className="mine-page__voucher-product">{order.productName}</Text>
+                  <View className="mine-page__voucher-footer">
+                    <Text className="mine-page__voucher-expire">{order.statusText}</Text>
+                  </View>
+                </View>
+                <ArrowRight size={16} color="#ccc" className="mine-page__voucher-arrow" />
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* 空状态 */}
+        {!ordersLoading && recentOrders.length === 0 && (
+          <View className="mine-page__empty-vouchers">
+            <Empty description="暂无订单" />
+            <Button
+              type="primary"
+              size="small"
+              onClick={handleOrdersClick}
+              style={{ marginTop: '16px' }}
+            >
+              去购买
             </Button>
           </View>
         )}

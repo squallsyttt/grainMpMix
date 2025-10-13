@@ -54,6 +54,59 @@
     }
   }
 
+  // 订单统计入口
+  &__order-entry {
+    background: #ffffff;
+    margin: 8px 16px;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:active {
+      background: #f7f7f7;
+    }
+  }
+
+  &__order-entry-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__order-entry-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+  }
+
+  &__order-entry-count {
+    font-size: 13px;
+    color: #999999;
+  }
+
+  &__order-entry-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__order-entry-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: #ff0000;
+    color: #ffffff;
+    font-size: 12px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   // 最近核销券区域
   &__recent-section {
     background: #ffffff;
