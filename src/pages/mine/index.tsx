@@ -17,6 +17,7 @@ import { Empty, Skeleton, Button } from '@nutui/nutui-react-taro'
 import { ArrowRight } from '@nutui/icons-react-taro'
 import { useUser } from '@/contexts/UserContext'
 import VoucherStatsCard from '@/components/VoucherStatsCard'
+import UserInfoCard from '@/components/UserInfoCard'
 import { getVoucherStats, getRecentVouchers, getOrderStats, getRecentOrders } from '@/services/user'
 import { VoucherStats, OrderStats } from '@/types/stats'
 import { RecentVoucher, RecentOrder } from '@/types/recent'
@@ -216,12 +217,8 @@ function Mine(): React.ReactElement {
    */
   return (
     <View className="mine-page">
-      {/* 用户信息区域 - 待后续实现 */}
-      <View className="mine-page__header">
-        <View className="mine-page__user-info">
-          <View className="mine-page__nickname">{userInfo?.nickname || '用户'}</View>
-        </View>
-      </View>
+      {/* 用户信息卡片 */}
+      <UserInfoCard userInfo={userInfo} isLoggedIn={isLoggedIn} />
 
       {/* 核销券统计卡片 */}
       <VoucherStatsCard

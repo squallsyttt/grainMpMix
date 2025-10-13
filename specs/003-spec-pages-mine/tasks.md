@@ -122,14 +122,14 @@
 
 ### Implementation for User Story 4
 
-- [ ] T032 [P] [US4] 创建用户信息卡片组件 `src/components/UserInfoCard/index.tsx`
-- [ ] T033 [P] [US4] 创建用户信息卡片样式 `src/components/UserInfoCard/index.less`
-- [ ] T034 [US4] 在个人中心页面顶部集成 UserInfoCard 组件
-- [ ] T035 [US4] 从 UserContext 获取用户信息并传递给 UserInfoCard
-- [ ] T036 [US4] 实现用户信息点击跳转到资料编辑页逻辑
-- [ ] T037 [US4] 添加未登录状态处理(显示默认头像和"点击登录"文案)
-- [ ] T038 [US4] 添加头像加载失败处理(显示默认占位图)
-- [ ] T039 [US4] 显示会员等级图标和名称(根据 memberLevel 显示对应UI)
+- [X] T032 [P] [US4] 创建用户信息卡片组件 `src/components/UserInfoCard/index.tsx`
+- [X] T033 [P] [US4] 创建用户信息卡片样式 `src/components/UserInfoCard/index.less`
+- [X] T034 [US4] 在个人中心页面顶部集成 UserInfoCard 组件
+- [X] T035 [US4] 从 UserContext 获取用户信息并传递给 UserInfoCard
+- [X] T036 [US4] 实现用户信息点击跳转到资料编辑页逻辑
+- [X] T037 [US4] 添加未登录状态处理(显示默认头像和"点击登录"文案)
+- [X] T038 [US4] 添加头像加载失败处理(显示默认占位图)
+- [X] T039 [US4] 显示会员等级图标和名称(根据 memberLevel 显示对应UI)
 
 **Checkpoint**: 此时用户故事1-4应都可独立工作
 
