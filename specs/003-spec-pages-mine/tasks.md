@@ -177,17 +177,17 @@
 
 **Purpose**: 影响多个用户故事的改进
 
-- [ ] T052 [P] 实现个人中心页面下拉刷新功能(使用 Taro usePullDownRefresh 钩子)
-- [ ] T053 [P] 添加页面骨架屏加载状态(使用 NutUI Skeleton 组件)
-- [ ] T054 [P] 实现图片懒加载(用户头像、商品图片使用 Taro Image 组件的 lazyLoad 属性)
-- [ ] T055 [P] 添加性能优化(核销券卡片、订单卡片、功能列表项使用 React.memo)
-- [ ] T056 [P] 添加事件处理器优化(点击事件使用 useCallback)
-- [ ] T057 完善错误处理和友好提示(所有数据加载失败显示友好错误信息,覆盖FR-024的5个模块)
-- [ ] T058 完善加载状态管理(避免数据请求冲突和状态错乱)
-- [ ] T059 [P] 添加页面样式优化 `src/pages/mine/index.less` (BEM命名规范,8px间距倍数)
-- [ ] T060 [P] 代码质量检查(TypeScript类型检查,ESLint检查,样式格式化)
-- [ ] T061 验证 quickstart.md 中的功能清单(确保所有功能正常工作)
-- [ ] T062 [P] 添加数据一致性验证(验证 VoucherStats 统计数字与实际券列表数量一致,满足FR-028要求)
+- [X] T052 [P] 实现个人中心页面下拉刷新功能(使用 Taro usePullDownRefresh 钩子)
+- [X] T053 [P] 添加页面骨架屏加载状态(使用 NutUI Skeleton 组件)
+- [X] T054 [P] 实现图片懒加载(用户头像、商品图片使用 Taro Image 组件的 lazyLoad 属性)
+- [X] T055 [P] 添加性能优化(核销券卡片、订单卡片、功能列表项使用 React.memo)
+- [X] T056 [P] 添加事件处理器优化(点击事件使用 useCallback)
+- [X] T057 完善错误处理和友好提示(所有数据加载失败显示友好错误信息,覆盖FR-024的5个模块)
+- [X] T058 完善加载状态管理(避免数据请求冲突和状态错乱)
+- [X] T059 [P] 添加页面样式优化 `src/pages/mine/index.less` (BEM命名规范,8px间距倍数)
+- [X] T060 [P] 代码质量检查(TypeScript类型检查,ESLint检查,样式格式化)
+- [X] T061 验证 quickstart.md 中的功能清单(确保所有功能正常工作)
+- [X] T062 [P] 添加数据一致性验证(验证 VoucherStats 统计数字与实际券列表数量一致,满足FR-028要求)
 
 ---
 
