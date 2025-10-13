@@ -53,6 +53,138 @@
       opacity: 0.8;
     }
   }
+
+  // 最近核销券区域
+  &__recent-section {
+    background: #ffffff;
+    margin: 8px 0;
+    padding: 16px;
+  }
+
+  &__section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  &__section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+  }
+
+  &__view-all {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:active {
+      opacity: 0.6;
+    }
+  }
+
+  &__view-all-text {
+    font-size: 14px;
+    color: #999999;
+    margin-right: 4px;
+  }
+
+  // 券列表
+  &__voucher-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__voucher-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #fafafa;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:active {
+      background: #f0f0f0;
+    }
+  }
+
+  &__voucher-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    background: #e0e0e0;
+  }
+
+  &__voucher-content {
+    flex: 1;
+    margin-left: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__voucher-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 4px;
+  }
+
+  &__voucher-product {
+    font-size: 13px;
+    color: #666666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 8px;
+  }
+
+  &__voucher-footer {
+    display: flex;
+    align-items: center;
+  }
+
+  &__voucher-expire {
+    font-size: 12px;
+    color: #ff6b00;
+  }
+
+  &__voucher-arrow {
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  // 骨架屏
+  &__voucher-skeleton {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #fafafa;
+    border-radius: 8px;
+  }
+
+  &__voucher-skeleton-content {
+    flex: 1;
+    margin-left: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // 空状态
+  &__empty-vouchers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+  }
 }
 
 // 适配 iPhone X 及以上设备

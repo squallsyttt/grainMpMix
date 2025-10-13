@@ -11,13 +11,15 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { View } from '@tarojs/components'
+import { View, Image, Text } from '@tarojs/components'
 import Taro, { usePullDownRefresh } from '@tarojs/taro'
-import { Empty } from '@nutui/nutui-react-taro'
+import { Empty, Skeleton, Button } from '@nutui/nutui-react-taro'
+import { ArrowRight } from '@nutui/icons-react-taro'
 import { useUser } from '@/contexts/UserContext'
 import VoucherStatsCard from '@/components/VoucherStatsCard'
-import { getVoucherStats } from '@/services/user'
+import { getVoucherStats, getRecentVouchers } from '@/services/user'
 import { VoucherStats } from '@/types/stats'
+import { RecentVoucher } from '@/types/recent'
 import './index.less'
 
 /**
@@ -26,7 +28,9 @@ import './index.less'
 function Mine(): React.ReactElement {
   const { userInfo, isLoggedIn } = useUser()
   const [voucherStats, setVoucherStats] = useState<VoucherStats | null>(null)
+  const [recentVouchers, setRecentVouchers] = useState<RecentVoucher[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const [vouchersLoading, setVouchersLoading] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
 
   /**
@@ -63,21 +67,45 @@ function Mine(): React.ReactElement {
   }, [])
 
   /**
+   * 加载最近核销券列表
+   */
+  const loadRecentVouchers = useCallback(async () => {
+    try {
+      setVouchersLoading(true)
+
+      const vouchers = await getRecentVouchers(3)
+      setRecentVouchers(vouchers)
+    } catch (err) {
+      console.error('[MinePage] 加载最近核销券失败:', err)
+    } finally {
+      setVouchersLoading(false)
+    }
+  }, [])
+
+  /**
+   * 加载所有数据
+   */
+  const loadAllData = useCallback(async () => {
+    await Promise.all([loadVoucherStats(), loadRecentVouchers()])
+  }, [loadVoucherStats, loadRecentVouchers])
+
+  /**
    * 页面初始化
    */
   useEffect(() => {
     if (isLoggedIn) {
-      loadVoucherStats()
+      loadAllData()
     } else {
       setLoading(false)
+      setVouchersLoading(false)
     }
-  }, [isLoggedIn, loadVoucherStats])
+  }, [isLoggedIn, loadAllData])
 
   /**
    * 下拉刷新
    */
   usePullDownRefresh(() => {
-    loadVoucherStats().finally(() => {
+    loadAllData().finally(() => {
       Taro.stopPullDownRefresh()
     })
   })
@@ -88,6 +116,24 @@ function Mine(): React.ReactElement {
   const handleRetry = useCallback(() => {
     loadVoucherStats()
   }, [loadVoucherStats])
+
+  /**
+   * 处理券卡片点击
+   */
+  const handleVoucherClick = useCallback((voucher: RecentVoucher) => {
+    Taro.navigateTo({
+      url: `/pages/voucher/detail/index?id=${voucher.id}`
+    })
+  }, [])
+
+  /**
+   * 查看全部核销券
+   */
+  const handleViewAllVouchers = useCallback(() => {
+    Taro.navigateTo({
+      url: '/pages/voucher/list/index?status=pending'
+    })
+  }, [])
 
   /**
    * 未登录状态
@@ -126,6 +172,80 @@ function Mine(): React.ReactElement {
         loading={loading}
         onRetry={error ? handleRetry : undefined}
       />
+
+      {/* 最近核销券列表 */}
+      <View className="mine-page__recent-section">
+        <View className="mine-page__section-header">
+          <Text className="mine-page__section-title">最近核销券</Text>
+          {!vouchersLoading && recentVouchers.length > 0 && voucherStats && voucherStats.pending > 3 && (
+            <View className="mine-page__view-all" onClick={handleViewAllVouchers}>
+              <Text className="mine-page__view-all-text">查看全部</Text>
+              <ArrowRight size={14} color="#999" />
+            </View>
+          )}
+        </View>
+
+        {/* 骨架屏加载 */}
+        {vouchersLoading && (
+          <View className="mine-page__voucher-list">
+            {[1, 2, 3].map((item) => (
+              <View key={item} className="mine-page__voucher-skeleton">
+                <Skeleton width="80px" height="80px" animated />
+                <View className="mine-page__voucher-skeleton-content">
+                  <Skeleton width="60%" height="20px" animated />
+                  <Skeleton width="40%" height="16px" animated style={{ marginTop: '8px' }} />
+                  <Skeleton width="50%" height="14px" animated style={{ marginTop: '8px' }} />
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* 券列表 */}
+        {!vouchersLoading && recentVouchers.length > 0 && (
+          <View className="mine-page__voucher-list">
+            {recentVouchers.map((voucher) => (
+              <View
+                key={voucher.id}
+                className="mine-page__voucher-item"
+                onClick={() => handleVoucherClick(voucher)}
+              >
+                <Image
+                  className="mine-page__voucher-image"
+                  src={voucher.productImage}
+                  mode="aspectFill"
+                  lazyLoad
+                />
+                <View className="mine-page__voucher-content">
+                  <Text className="mine-page__voucher-title">{voucher.title}</Text>
+                  <Text className="mine-page__voucher-product">{voucher.productName}</Text>
+                  <View className="mine-page__voucher-footer">
+                    <Text className="mine-page__voucher-expire">
+                      剩余 {voucher.daysRemaining} 天
+                    </Text>
+                  </View>
+                </View>
+                <ArrowRight size={16} color="#ccc" className="mine-page__voucher-arrow" />
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* 空状态 */}
+        {!vouchersLoading && recentVouchers.length === 0 && (
+          <View className="mine-page__empty-vouchers">
+            <Empty description="暂无待核销券" />
+            <Button
+              type="primary"
+              size="small"
+              onClick={handleViewAllVouchers}
+              style={{ marginTop: '16px' }}
+            >
+              查看已核销券
+            </Button>
+          </View>
+        )}
+      </View>
 
       {/* 其他功能区域 - 待后续实现 */}
     </View>

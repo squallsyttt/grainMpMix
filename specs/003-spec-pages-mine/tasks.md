@@ -81,13 +81,13 @@
 
 ### Implementation for User Story 2
 
-- [ ] T017 [US2] 在个人中心页面 `src/pages/mine/index.tsx` 中添加最近核销券列表区域
-- [ ] T018 [US2] 实现最近核销券数据加载逻辑(调用 getRecentVouchers API,限制3条,计算 daysRemaining = Math.ceil((expireAt - now) / 86400))
-- [ ] T019 [US2] 复用 VoucherCard 组件展示最近核销券(显示商品图片、名称、剩余天数,如组件不支持则需扩展)
-- [ ] T020 [US2] 实现券卡片点击跳转到详情页逻辑(传递券ID参数)
-- [ ] T021 [US2] 添加"查看全部"按钮(当待核销券>3张时显示)
-- [ ] T022 [US2] 添加空状态处理(无待核销券时显示"暂无待核销券"和"查看已核销券"按钮)
-- [ ] T023 [US2] 添加加载骨架屏(使用 NutUI Skeleton 组件)
+- [X] T017 [US2] 在个人中心页面 `src/pages/mine/index.tsx` 中添加最近核销券列表区域
+- [X] T018 [US2] 实现最近核销券数据加载逻辑(调用 getRecentVouchers API,限制3条,计算 daysRemaining = Math.ceil((expireAt - now) / 86400))
+- [X] T019 [US2] 复用 VoucherCard 组件展示最近核销券(显示商品图片、名称、剩余天数,如组件不支持则需扩展)
+- [X] T020 [US2] 实现券卡片点击跳转到详情页逻辑(传递券ID参数)
+- [X] T021 [US2] 添加"查看全部"按钮(当待核销券>3张时显示)
+- [X] T022 [US2] 添加空状态处理(无待核销券时显示"暂无待核销券"和"查看已核销券"按钮)
+- [X] T023 [US2] 添加加载骨架屏(使用 NutUI Skeleton 组件)
 
 **Checkpoint**: 此时用户故事1和2应都可独立工作
 
