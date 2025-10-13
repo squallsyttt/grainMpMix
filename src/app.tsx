@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { RegionProvider } from './contexts/RegionContext'
 import { CartProvider } from './contexts/CartContext'
+import { UserProvider } from './contexts/UserContext'
 import { initNotification } from './utils/notification'
 import '@nutui/icons-react-taro/dist/style_icon.css'
 import './app.less'
@@ -17,9 +18,11 @@ function App(props) {
 
   return (
     <RegionProvider>
-      <CartProvider>
-        {props.children}
-      </CartProvider>
+      <UserProvider>
+        <CartProvider>
+          {props.children}
+        </CartProvider>
+      </UserProvider>
     </RegionProvider>
   )
 }

@@ -1,0 +1,81 @@
+/**
+ * 用户信息卡片样式
+ * Feature: 核销券个人中心主页
+ */
+
+.user-info-card {
+  background: linear-gradient(135deg, #ff6b00 0%, #ff8c42 100%);
+  padding: 24px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:active {
+    opacity: 0.9;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  &__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    background: #ffffff;
+  }
+
+  &__info {
+    flex: 1;
+    margin-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__nickname-row {
+    display: flex;
+    align-items: center;
+  }
+
+  &__nickname {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  &__member-row {
+    display: flex;
+    align-items: center;
+  }
+
+  &__member-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__member-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #ffffff;
+  }
+
+  &__login-tip {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  &__arrow {
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}

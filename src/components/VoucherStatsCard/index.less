@@ -1,0 +1,108 @@
+/**
+ * 核销券统计卡片样式
+ * Feature: 核销券个人中心主页
+ */
+
+.voucher-stats-card {
+  margin: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 16px;
+  }
+
+  &__stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:active {
+      background: #f7f7f7;
+      border-radius: 4px;
+    }
+
+    &:not(:last-child) {
+      border-right: 1px solid #f0f0f0;
+    }
+  }
+
+  &__stat-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: #ff6b00;
+    margin-bottom: 4px;
+    position: relative;
+  }
+
+  &__badge {
+    position: absolute;
+    top: -2px;
+    right: -10px;
+    width: 8px;
+    height: 8px;
+    background: #ff0000;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+  }
+
+  &__stat-label {
+    font-size: 14px;
+    color: #999999;
+  }
+
+  &__expiring-tag {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: scale(0.85);
+  }
+
+  // 空状态样式
+  &--empty {
+    padding: 32px 16px;
+  }
+
+  &__empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__empty-text {
+    font-size: 14px;
+    color: #999999;
+    margin-bottom: 16px;
+  }
+
+  &__retry-btn {
+    font-size: 14px;
+    color: #ff6b00;
+    padding: 8px 16px;
+    border: 1px solid #ff6b00;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:active {
+      background: #ff6b00;
+      color: #ffffff;
+    }
+  }
+}

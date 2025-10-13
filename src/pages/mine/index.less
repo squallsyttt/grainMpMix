@@ -1,40 +1,294 @@
-.page {
+/**
+ * 个人中心页面样式
+ * Feature: 核销券个人中心主页
+ */
+
+.mine-page {
   min-height: 100vh;
   width: 100%;
   max-width: 100vw;
-  display: flex;
-  flex-direction: column;
+  background: #f7f7f7;
   padding-bottom: 70px; // 为 TabBar 预留空间
   box-sizing: border-box;
   overflow-x: hidden;
-  overflow-y: auto;
+
+  // 页头区域
+  &__header {
+    background: #ffffff;
+    padding: 16px;
+    margin-bottom: 8px;
+  }
+
+  &__user-info {
+    display: flex;
+    align-items: center;
+  }
+
+  &__nickname {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333333;
+  }
+
+  // 未登录提示
+  &__login-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 16px;
+  }
+
+  &__login-btn {
+    margin-top: 24px;
+    padding: 12px 32px;
+    background: #ff6b00;
+    color: #ffffff;
+    font-size: 16px;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  // 订单统计入口
+  &__order-entry {
+    background: #ffffff;
+    margin: 8px 16px;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:active {
+      background: #f7f7f7;
+    }
+  }
+
+  &__order-entry-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__order-entry-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+  }
+
+  &__order-entry-count {
+    font-size: 13px;
+    color: #999999;
+  }
+
+  &__order-entry-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__order-entry-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: #ff0000;
+    color: #ffffff;
+    font-size: 12px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // 登录引导区域
+  &__login-guide {
+    background: #ffffff;
+    margin: 8px 16px;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:active {
+      background: #f7f7f7;
+    }
+  }
+
+  &__login-guide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__login-guide-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333333;
+  }
+
+  &__login-guide-desc {
+    font-size: 13px;
+    color: #999999;
+  }
+
+  // 最近核销券区域
+  &__recent-section {
+    background: #ffffff;
+    margin: 8px 0;
+    padding: 16px;
+  }
+
+  &__section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  &__section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+  }
+
+  &__view-all {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:active {
+      opacity: 0.6;
+    }
+  }
+
+  &__view-all-text {
+    font-size: 14px;
+    color: #999999;
+    margin-right: 4px;
+  }
+
+  // 券列表
+  &__voucher-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__voucher-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #fafafa;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:active {
+      background: #f0f0f0;
+    }
+  }
+
+  &__voucher-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    background: #e0e0e0;
+  }
+
+  &__voucher-content {
+    flex: 1;
+    margin-left: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__voucher-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 4px;
+  }
+
+  &__voucher-product {
+    font-size: 13px;
+    color: #666666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 8px;
+  }
+
+  &__voucher-footer {
+    display: flex;
+    align-items: center;
+  }
+
+  &__voucher-expire {
+    font-size: 12px;
+    color: #ff6b00;
+  }
+
+  &__voucher-arrow {
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  // 骨架屏
+  &__voucher-skeleton {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #fafafa;
+    border-radius: 8px;
+  }
+
+  &__voucher-skeleton-content {
+    flex: 1;
+    margin-left: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // 空状态
+  &__empty-vouchers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+  }
+
+  // 功能列表区域
+  &__function-section {
+    background: #ffffff;
+    margin: 8px 0;
+    overflow: hidden;
+  }
 }
 
 // 适配 iPhone X 及以上设备
 @supports (padding: max(0px)) {
-  .page {
+  .mine-page {
     width: 100%;
     max-width: 100vw;
     padding-bottom: max(70px, calc(50px + env(safe-area-inset-bottom) + 20px));
     overflow-x: hidden;
   }
-}
-
-.page__section {
-  padding: 24px;
-  width: 100%;
-  max-width: 100vw;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.page__title {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.page__desc {
-  margin-top: 8px;
-  color: #666;
 }
 

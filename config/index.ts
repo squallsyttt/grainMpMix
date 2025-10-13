@@ -50,6 +50,10 @@ const config = {
       }
     },
     webpackChain(chain) {
+      // 配置路径别名
+      chain.resolve.alias
+        .set('@', require('path').resolve(__dirname, '..', 'src'))
+
       // 忽略 CSS 模块顺序警告 - 检查插件是否存在
       if (chain.plugins.has('mini-css-extract-plugin')) {
         chain.plugin('mini-css-extract-plugin').tap((args) => {
@@ -90,6 +94,10 @@ const config = {
       }
     },
     webpackChain(chain) {
+      // 配置路径别名
+      chain.resolve.alias
+        .set('@', require('path').resolve(__dirname, '..', 'src'))
+
       // 忽略 CSS 模块顺序警告 - 检查插件是否存在
       if (chain.plugins.has('mini-css-extract-plugin')) {
         chain.plugin('mini-css-extract-plugin').tap((args) => {
