@@ -14,7 +14,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { View, Image, Text } from '@tarojs/components'
 import Taro, { usePullDownRefresh } from '@tarojs/taro'
 import { Empty, Skeleton, Button } from '@nutui/nutui-react-taro'
-import { ArrowRight, Location, Service, Message, Setting, Del } from '@nutui/icons-react-taro'
+import { ArrowRight, Location, Service, Message, Setting, Del, Car } from '@nutui/icons-react-taro'
 import { useUser } from '@/contexts/UserContext'
 import VoucherStatsCard from '@/components/VoucherStatsCard'
 import UserInfoCard from '@/components/UserInfoCard'
@@ -80,6 +80,19 @@ function Mine(): React.ReactElement {
       title: '设置',
       icon: Setting,
       url: '/pages/settings/index'
+    },
+    {
+      id: 'delivery',
+      title: '跑腿配送',
+      icon: Car,
+      comingSoon: true,
+      action: () => {
+        Taro.showToast({
+          title: '即将上线,敬请期待',
+          icon: 'none',
+          duration: 2000
+        })
+      }
     }
   ]
 
