@@ -348,151 +348,151 @@ function Mine(): React.ReactElement {
       {/* 最近核销券列表 - 仅登录后显示 */}
       {isLoggedIn && (
         <View className="mine-page__recent-section">
-        <View className="mine-page__section-header">
-          <Text className="mine-page__section-title">最近核销券</Text>
-          {!vouchersLoading && recentVouchers.length > 0 && voucherStats && voucherStats.pending > 3 && (
-            <View className="mine-page__view-all" onClick={handleViewAllVouchers}>
-              <Text className="mine-page__view-all-text">查看全部</Text>
-              <ArrowRight size={14} color="#999" />
+          <View className="mine-page__section-header">
+            <Text className="mine-page__section-title">最近核销券</Text>
+            {!vouchersLoading && recentVouchers.length > 0 && voucherStats && voucherStats.pending > 3 && (
+              <View className="mine-page__view-all" onClick={handleViewAllVouchers}>
+                <Text className="mine-page__view-all-text">查看全部</Text>
+                <ArrowRight size={14} color="#999" />
+              </View>
+            )}
+          </View>
+
+          {/* 骨架屏加载 */}
+          {vouchersLoading && (
+            <View className="mine-page__voucher-list">
+              {[1, 2, 3].map((item) => (
+                <View key={item} className="mine-page__voucher-skeleton">
+                  <Skeleton width="80px" height="80px" animated />
+                  <View className="mine-page__voucher-skeleton-content">
+                    <Skeleton width="60%" height="20px" animated />
+                    <Skeleton width="40%" height="16px" animated style={{ marginTop: '8px' }} />
+                    <Skeleton width="50%" height="14px" animated style={{ marginTop: '8px' }} />
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* 券列表 */}
+          {!vouchersLoading && recentVouchers.length > 0 && (
+            <View className="mine-page__voucher-list">
+              {recentVouchers.map((voucher) => (
+                <View
+                  key={voucher.id}
+                  className="mine-page__voucher-item"
+                  onClick={() => handleVoucherClick(voucher)}
+                >
+                  <Image
+                    className="mine-page__voucher-image"
+                    src={voucher.productImage}
+                    mode="aspectFill"
+                    lazyLoad
+                  />
+                  <View className="mine-page__voucher-content">
+                    <Text className="mine-page__voucher-title">{voucher.title}</Text>
+                    <Text className="mine-page__voucher-product">{voucher.productName}</Text>
+                    <View className="mine-page__voucher-footer">
+                      <Text className="mine-page__voucher-expire">
+                        剩余 {voucher.daysRemaining} 天
+                      </Text>
+                    </View>
+                  </View>
+                  <ArrowRight size={16} color="#ccc" className="mine-page__voucher-arrow" />
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* 空状态 */}
+          {!vouchersLoading && recentVouchers.length === 0 && (
+            <View className="mine-page__empty-vouchers">
+              <Empty description="暂无待核销券" />
+              <Button
+                type="primary"
+                size="small"
+                onClick={handleViewAllVouchers}
+                style={{ marginTop: '16px' }}
+              >
+                查看已核销券
+              </Button>
             </View>
           )}
         </View>
-
-        {/* 骨架屏加载 */}
-        {vouchersLoading && (
-          <View className="mine-page__voucher-list">
-            {[1, 2, 3].map((item) => (
-              <View key={item} className="mine-page__voucher-skeleton">
-                <Skeleton width="80px" height="80px" animated />
-                <View className="mine-page__voucher-skeleton-content">
-                  <Skeleton width="60%" height="20px" animated />
-                  <Skeleton width="40%" height="16px" animated style={{ marginTop: '8px' }} />
-                  <Skeleton width="50%" height="14px" animated style={{ marginTop: '8px' }} />
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* 券列表 */}
-        {!vouchersLoading && recentVouchers.length > 0 && (
-          <View className="mine-page__voucher-list">
-            {recentVouchers.map((voucher) => (
-              <View
-                key={voucher.id}
-                className="mine-page__voucher-item"
-                onClick={() => handleVoucherClick(voucher)}
-              >
-                <Image
-                  className="mine-page__voucher-image"
-                  src={voucher.productImage}
-                  mode="aspectFill"
-                  lazyLoad
-                />
-                <View className="mine-page__voucher-content">
-                  <Text className="mine-page__voucher-title">{voucher.title}</Text>
-                  <Text className="mine-page__voucher-product">{voucher.productName}</Text>
-                  <View className="mine-page__voucher-footer">
-                    <Text className="mine-page__voucher-expire">
-                      剩余 {voucher.daysRemaining} 天
-                    </Text>
-                  </View>
-                </View>
-                <ArrowRight size={16} color="#ccc" className="mine-page__voucher-arrow" />
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* 空状态 */}
-        {!vouchersLoading && recentVouchers.length === 0 && (
-          <View className="mine-page__empty-vouchers">
-            <Empty description="暂无待核销券" />
-            <Button
-              type="primary"
-              size="small"
-              onClick={handleViewAllVouchers}
-              style={{ marginTop: '16px' }}
-            >
-              查看已核销券
-            </Button>
-          </View>
-        )}
-      </View>
       )}
 
       {/* 最近订单列表 - 仅登录后显示 */}
       {isLoggedIn && (
-      <View className="mine-page__recent-section">
-        <View className="mine-page__section-header">
-          <Text className="mine-page__section-title">最近订单</Text>
+        <View className="mine-page__recent-section">
+          <View className="mine-page__section-header">
+            <Text className="mine-page__section-title">最近订单</Text>
+            {!ordersLoading && recentOrders.length > 0 && (
+              <View className="mine-page__view-all" onClick={handleOrdersClick}>
+                <Text className="mine-page__view-all-text">查看全部</Text>
+                <ArrowRight size={14} color="#999" />
+              </View>
+            )}
+          </View>
+
+          {/* 骨架屏加载 */}
+          {ordersLoading && (
+            <View className="mine-page__voucher-list">
+              {[1, 2, 3].map((item) => (
+                <View key={item} className="mine-page__voucher-skeleton">
+                  <Skeleton width="80px" height="80px" animated />
+                  <View className="mine-page__voucher-skeleton-content">
+                    <Skeleton width="60%" height="20px" animated />
+                    <Skeleton width="40%" height="16px" animated style={{ marginTop: '8px' }} />
+                    <Skeleton width="50%" height="14px" animated style={{ marginTop: '8px' }} />
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* 订单列表 */}
           {!ordersLoading && recentOrders.length > 0 && (
-            <View className="mine-page__view-all" onClick={handleOrdersClick}>
-              <Text className="mine-page__view-all-text">查看全部</Text>
-              <ArrowRight size={14} color="#999" />
+            <View className="mine-page__voucher-list">
+              {recentOrders.map((order) => (
+                <View
+                  key={order.id}
+                  className="mine-page__voucher-item"
+                  onClick={() => handleOrderClick(order)}
+                >
+                  <Image
+                    className="mine-page__voucher-image"
+                    src={order.productImage}
+                    mode="aspectFill"
+                    lazyLoad
+                  />
+                  <View className="mine-page__voucher-content">
+                    <Text className="mine-page__voucher-title">订单号: {order.orderNo}</Text>
+                    <Text className="mine-page__voucher-product">{order.productName}</Text>
+                    <View className="mine-page__voucher-footer">
+                      <Text className="mine-page__voucher-expire">{order.statusText}</Text>
+                    </View>
+                  </View>
+                  <ArrowRight size={16} color="#ccc" className="mine-page__voucher-arrow" />
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* 空状态 */}
+          {!ordersLoading && recentOrders.length === 0 && (
+            <View className="mine-page__empty-vouchers">
+              <Empty description="暂无订单" />
+              <Button
+                type="primary"
+                size="small"
+                onClick={handleOrdersClick}
+                style={{ marginTop: '16px' }}
+              >
+                去购买
+              </Button>
             </View>
           )}
         </View>
-
-        {/* 骨架屏加载 */}
-        {ordersLoading && (
-          <View className="mine-page__voucher-list">
-            {[1, 2, 3].map((item) => (
-              <View key={item} className="mine-page__voucher-skeleton">
-                <Skeleton width="80px" height="80px" animated />
-                <View className="mine-page__voucher-skeleton-content">
-                  <Skeleton width="60%" height="20px" animated />
-                  <Skeleton width="40%" height="16px" animated style={{ marginTop: '8px' }} />
-                  <Skeleton width="50%" height="14px" animated style={{ marginTop: '8px' }} />
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* 订单列表 */}
-        {!ordersLoading && recentOrders.length > 0 && (
-          <View className="mine-page__voucher-list">
-            {recentOrders.map((order) => (
-              <View
-                key={order.id}
-                className="mine-page__voucher-item"
-                onClick={() => handleOrderClick(order)}
-              >
-                <Image
-                  className="mine-page__voucher-image"
-                  src={order.productImage}
-                  mode="aspectFill"
-                  lazyLoad
-                />
-                <View className="mine-page__voucher-content">
-                  <Text className="mine-page__voucher-title">订单号: {order.orderNo}</Text>
-                  <Text className="mine-page__voucher-product">{order.productName}</Text>
-                  <View className="mine-page__voucher-footer">
-                    <Text className="mine-page__voucher-expire">{order.statusText}</Text>
-                  </View>
-                </View>
-                <ArrowRight size={16} color="#ccc" className="mine-page__voucher-arrow" />
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* 空状态 */}
-        {!ordersLoading && recentOrders.length === 0 && (
-          <View className="mine-page__empty-vouchers">
-            <Empty description="暂无订单" />
-            <Button
-              type="primary"
-              size="small"
-              onClick={handleOrdersClick}
-              style={{ marginTop: '16px' }}
-            >
-              去购买
-            </Button>
-          </View>
-        )}
-      </View>
       )}
 
       {/* 功能列表 */}
