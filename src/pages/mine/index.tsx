@@ -14,7 +14,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { View, Image, Text } from '@tarojs/components'
 import Taro, { usePullDownRefresh } from '@tarojs/taro'
 import { Empty, Skeleton, Button } from '@nutui/nutui-react-taro'
-import { ArrowRight, Location, Service, Message, Setting, Del, Car } from '@nutui/icons-react-taro'
+import { ArrowRight, Location, Service, Message, Setting, Del, Transit } from '@nutui/icons-react-taro'
 import { useUser } from '@/contexts/UserContext'
 import VoucherStatsCard from '@/components/VoucherStatsCard'
 import UserInfoCard from '@/components/UserInfoCard'
@@ -84,7 +84,7 @@ function Mine(): React.ReactElement {
     {
       id: 'delivery',
       title: '跑腿配送',
-      icon: Car,
+      icon: Transit,
       comingSoon: true,
       action: () => {
         Taro.showToast({
