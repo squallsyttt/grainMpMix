@@ -1,0 +1,80 @@
+/**
+ * 功能列表项样式
+ * Feature: 核销券个人中心主页
+ */
+
+.function-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:active {
+    background: #f7f7f7;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  // 禁用状态
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    &:active {
+      background: #ffffff;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__title {
+    flex: 1;
+    font-size: 15px;
+    color: #333333;
+  }
+
+  &__badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: #ff0000;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__badge-text {
+    font-size: 12px;
+    color: #ffffff;
+    font-weight: 500;
+  }
+
+  &__coming-soon {
+    padding: 2px 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  &__coming-soon-text {
+    font-size: 11px;
+    color: #999999;
+  }
+}

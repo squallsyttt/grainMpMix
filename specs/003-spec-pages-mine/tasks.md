@@ -143,15 +143,15 @@
 
 ### Implementation for User Story 5
 
-- [ ] T040 [P] [US5] 创建功能列表项组件 `src/components/FunctionListItem/index.tsx`
-- [ ] T041 [P] [US5] 创建功能列表项样式 `src/components/FunctionListItem/index.less`
-- [ ] T042 [US5] 在个人中心页面底部添加功能列表区域
-- [ ] T043 [US5] 定义功能列表配置数据(包含收货地址、联系客服、意见反馈、设置等)
-- [ ] T044 [US5] 渲染功能列表项(使用 FunctionListItem 组件)
-- [ ] T045 [US5] 实现功能项点击跳转逻辑(根据 url 或 action 处理)
-- [ ] T046 [US5] 实现"联系客服"功能(打开客服对话或拨打电话)
-- [ ] T047 [US5] 实现"设置"页面跳转(包含关于我们、隐私政策、退出登录等)
-- [ ] T048 [US5] 实现"退出登录"功能(清除 UserContext 和 localStorage,返回个人中心显示未登录状态)
+- [X] T040 [P] [US5] 创建功能列表项组件 `src/components/FunctionListItem/index.tsx`
+- [X] T041 [P] [US5] 创建功能列表项样式 `src/components/FunctionListItem/index.less`
+- [X] T042 [US5] 在个人中心页面底部添加功能列表区域
+- [X] T043 [US5] 定义功能列表配置数据(包含收货地址、联系客服、意见反馈、设置等)
+- [X] T044 [US5] 渲染功能列表项(使用 FunctionListItem 组件)
+- [X] T045 [US5] 实现功能项点击跳转逻辑(根据 url 或 action 处理)
+- [X] T046 [US5] 实现"联系客服"功能(打开客服对话或拨打电话)
+- [X] T047 [US5] 实现"设置"页面跳转(包含关于我们、隐私政策、退出登录等)
+- [X] T048 [US5] 实现"退出登录"功能(清除 UserContext 和 localStorage,返回个人中心显示未登录状态)
 
 **Checkpoint**: 此时用户故事1-5应都可独立工作
 

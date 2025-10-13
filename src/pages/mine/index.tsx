@@ -14,20 +14,22 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { View, Image, Text } from '@tarojs/components'
 import Taro, { usePullDownRefresh } from '@tarojs/taro'
 import { Empty, Skeleton, Button } from '@nutui/nutui-react-taro'
-import { ArrowRight } from '@nutui/icons-react-taro'
+import { ArrowRight, Location, Service, Message, Setting, Del } from '@nutui/icons-react-taro'
 import { useUser } from '@/contexts/UserContext'
 import VoucherStatsCard from '@/components/VoucherStatsCard'
 import UserInfoCard from '@/components/UserInfoCard'
+import FunctionListItem from '@/components/FunctionListItem'
 import { getVoucherStats, getRecentVouchers, getOrderStats, getRecentOrders } from '@/services/user'
 import { VoucherStats, OrderStats } from '@/types/stats'
 import { RecentVoucher, RecentOrder } from '@/types/recent'
+import { FunctionItem } from '@/types/function'
 import './index.less'
 
 /**
  * 个人中心页面组件
  */
 function Mine(): React.ReactElement {
-  const { userInfo, isLoggedIn } = useUser()
+  const { userInfo, isLoggedIn, logout } = useUser()
   const [voucherStats, setVoucherStats] = useState<VoucherStats | null>(null)
   const [orderStats, setOrderStats] = useState<OrderStats | null>(null)
   const [recentVouchers, setRecentVouchers] = useState<RecentVoucher[]>([])
@@ -36,6 +38,77 @@ function Mine(): React.ReactElement {
   const [vouchersLoading, setVouchersLoading] = useState<boolean>(true)
   const [ordersLoading, setOrdersLoading] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
+
+  /**
+   * 功能列表配置
+   */
+  const functionList: FunctionItem[] = [
+    {
+      id: 'address',
+      title: '收货地址',
+      icon: Location,
+      url: '/pages/address/list/index'
+    },
+    {
+      id: 'service',
+      title: '联系客服',
+      icon: Service,
+      action: () => {
+        Taro.showModal({
+          title: '联系客服',
+          content: '客服电话: 400-123-4567',
+          showCancel: true,
+          confirmText: '拨打',
+          success: (res) => {
+            if (res.confirm) {
+              Taro.makePhoneCall({
+                phoneNumber: '400-123-4567'
+              })
+            }
+          }
+        })
+      }
+    },
+    {
+      id: 'feedback',
+      title: '意见反馈',
+      icon: Message,
+      url: '/pages/feedback/index'
+    },
+    {
+      id: 'settings',
+      title: '设置',
+      icon: Setting,
+      url: '/pages/settings/index'
+    }
+  ]
+
+  /**
+   * 如果已登录,添加退出登录选项
+   */
+  if (isLoggedIn) {
+    functionList.push({
+      id: 'logout',
+      title: '退出登录',
+      icon: Del,
+      action: () => {
+        Taro.showModal({
+          title: '提示',
+          content: '确定要退出登录吗?',
+          success: (res) => {
+            if (res.confirm) {
+              logout()
+              Taro.showToast({
+                title: '已退出登录',
+                icon: 'success',
+                duration: 2000
+              })
+            }
+          }
+        })
+      }
+    })
+  }
 
   /**
    * 加载核销券统计数据
@@ -191,6 +264,21 @@ function Mine(): React.ReactElement {
     Taro.navigateTo({
       url: `/pages/order/detail/index?id=${order.id}`
     })
+  }, [])
+
+  /**
+   * 处理功能项点击
+   */
+  const handleFunctionClick = useCallback((item: FunctionItem) => {
+    if (item.action) {
+      // 执行自定义action
+      item.action()
+    } else if (item.url) {
+      // 跳转到指定页面
+      Taro.navigateTo({
+        url: item.url
+      })
+    }
   }, [])
 
   /**
@@ -387,6 +475,13 @@ function Mine(): React.ReactElement {
             </Button>
           </View>
         )}
+      </View>
+
+      {/* 功能列表 */}
+      <View className="mine-page__function-section">
+        {functionList.map((item) => (
+          <FunctionListItem key={item.id} item={item} onClick={handleFunctionClick} />
+        ))}
       </View>
 
       {/* 其他功能区域 - 待后续实现 */}
