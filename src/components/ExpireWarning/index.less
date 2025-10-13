@@ -1,0 +1,106 @@
+/**
+ * 过期警告组件样式
+ */
+
+.expire-warning {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #d9d9d9;
+
+  &__icon {
+    flex-shrink: 0;
+    margin-right: 6px;
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__text {
+    font-size: 13px;
+    line-height: 18px;
+    color: #333333;
+  }
+
+  &__countdown {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+  }
+
+  // 信息级别(7天内)
+  &--info {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+
+    .expire-warning__icon {
+      color: #1890ff;
+    }
+
+    .expire-warning__text {
+      color: #0050b3;
+    }
+
+    .expire-warning__countdown {
+      color: #1890ff;
+    }
+  }
+
+  // 警告级别(3天内)
+  &--warning {
+    background-color: #fffbe6;
+    border-color: #ffe58f;
+
+    .expire-warning__icon {
+      color: #faad14;
+    }
+
+    .expire-warning__text {
+      color: #ad6800;
+    }
+
+    .expire-warning__countdown {
+      color: #faad14;
+      font-weight: 600;
+    }
+  }
+
+  // 危险级别(24小时内)
+  &--danger {
+    background-color: #fff1f0;
+    border-color: #ffa39e;
+
+    .expire-warning__icon {
+      color: #ff4d4f;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .expire-warning__text {
+      color: #a8071a;
+      font-weight: 500;
+    }
+
+    .expire-warning__countdown {
+      color: #ff4d4f;
+      font-weight: 700;
+      animation: pulse 2s ease-in-out infinite;
+    }
+  }
+}
+
+// 脉冲动画(用于危险级别)
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}

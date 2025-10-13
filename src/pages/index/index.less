@@ -103,3 +103,81 @@
   color: #999;
   font-size: 14px;
 }
+
+// 快捷入口区域（开发调试用）
+.page__debug-section {
+  background-color: #fff;
+  border-radius: 12px;
+  margin: 12px 16px;
+  padding: 20px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.page__quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page__quick-category {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.page__quick-category-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  padding-left: 8px;
+  border-left: 3px solid #FF6B35;
+}
+
+.page__quick-links-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.page__quick-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:active {
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8856 100%);
+    border-color: #FF6B35;
+    transform: scale(0.98);
+
+    .page__quick-link-text {
+      color: #ffffff;
+    }
+  }
+}
+
+.page__quick-link-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.page__debug-note {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #fff7e6;
+  border-radius: 8px;
+  border-left: 3px solid #faad14;
+}
+
+.page__debug-note-text {
+  font-size: 12px;
+  color: #d48806;
+  line-height: 1.6;
+}

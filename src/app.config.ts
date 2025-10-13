@@ -6,7 +6,15 @@ export default defineAppConfig({
     'pages/news/index',
     'pages/news/detail',
     'pages/mine/index',
-    'pages/product/detail/index'
+    'pages/product/detail/index',
+    // 核销券相关页面
+    'pages/voucher/list/index',
+    'pages/voucher/detail/index',
+    // 订单相关页面
+    'pages/order/list/index',
+    'pages/order/detail/index',
+    // 商家扫码核销页面
+    'pages/merchant-scan/index'
   ],
   window: {
     backgroundTextStyle: 'light',

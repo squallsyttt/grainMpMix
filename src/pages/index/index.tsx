@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text } from '@tarojs/components'
 import { Button } from "@nutui/nutui-react-taro"
+import { ArrowRight } from '@nutui/icons-react-taro'
+import Taro from '@tarojs/taro'
 import RegionBar from '../../components/RegionBar'
 import RegionSelector from '../../components/RegionSelector'
 import HomeBanner from '../../components/HomeBanner'
@@ -104,6 +106,84 @@ function Index() {
           <Button type="primary" className="btn">
             查看当地粮食行情
           </Button>
+        </View>
+      </View>
+
+      {/* 快捷入口 - 开发调试用 */}
+      <View className="page__section page__debug-section">
+        <View className="page__section-header">
+          <Text className="page__section-title">🚀 快捷入口（开发调试）</Text>
+        </View>
+
+        <View className="page__quick-links">
+          {/* 核销券相关 */}
+          <View className="page__quick-category">
+            <Text className="page__quick-category-title">核销券功能</Text>
+            <View className="page__quick-links-grid">
+              <View
+                className="page__quick-link"
+                onClick={() => Taro.navigateTo({ url: '/pages/voucher/list/index' })}
+              >
+                <Text className="page__quick-link-text">核销券列表</Text>
+                <ArrowRight size={14} />
+              </View>
+              <View
+                className="page__quick-link"
+                onClick={() => Taro.navigateTo({ url: '/pages/voucher/detail/index?id=123' })}
+              >
+                <Text className="page__quick-link-text">核销券详情</Text>
+                <ArrowRight size={14} />
+              </View>
+              <View
+                className="page__quick-link"
+                onClick={() => Taro.navigateTo({ url: '/pages/merchant-scan/index' })}
+              >
+                <Text className="page__quick-link-text">商家扫码核销</Text>
+                <ArrowRight size={14} />
+              </View>
+            </View>
+          </View>
+
+          {/* 订单相关 */}
+          <View className="page__quick-category">
+            <Text className="page__quick-category-title">订单功能</Text>
+            <View className="page__quick-links-grid">
+              <View
+                className="page__quick-link"
+                onClick={() => Taro.navigateTo({ url: '/pages/order/list/index' })}
+              >
+                <Text className="page__quick-link-text">订单列表</Text>
+                <ArrowRight size={14} />
+              </View>
+              <View
+                className="page__quick-link"
+                onClick={() => Taro.navigateTo({ url: '/pages/order/detail/index?id=456' })}
+              >
+                <Text className="page__quick-link-text">订单详情</Text>
+                <ArrowRight size={14} />
+              </View>
+            </View>
+          </View>
+
+          {/* 商品相关 */}
+          <View className="page__quick-category">
+            <Text className="page__quick-category-title">商品功能</Text>
+            <View className="page__quick-links-grid">
+              <View
+                className="page__quick-link"
+                onClick={() => Taro.navigateTo({ url: '/pages/product/detail/index?id=1' })}
+              >
+                <Text className="page__quick-link-text">商品详情</Text>
+                <ArrowRight size={14} />
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View className="page__debug-note">
+          <Text className="page__debug-note-text">
+            💡 提示：这些入口用于开发调试，方便快速访问各个页面查看效果
+          </Text>
         </View>
       </View>
 

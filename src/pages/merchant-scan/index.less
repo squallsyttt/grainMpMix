@@ -1,0 +1,222 @@
+/**
+ * 商家扫码核销页面样式
+ */
+
+.merchant-scan {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+
+  /* 顶部扫码按钮 */
+  &__scan-btn {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  /* 券信息卡片 */
+  &__voucher-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    flex: 1;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333333;
+    line-height: 1.4;
+  }
+
+  &__description {
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  /* 金额/折扣显示 */
+  &__value-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  &__value {
+    font-size: 36px;
+    font-weight: bold;
+    color: #FF6B35;
+  }
+
+  &__value-label {
+    font-size: 14px;
+    color: #999999;
+  }
+
+  /* 信息行 */
+  &__info-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f5f5f5;
+  }
+
+  &__section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 12px;
+  }
+
+  &__info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__label {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: #999999;
+    width: 80px;
+  }
+
+  &__value-text {
+    flex: 1;
+    font-size: 14px;
+    color: #333333;
+  }
+
+  /* 核销按钮 */
+  &__confirm-btn {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  /* 警告提示 */
+  &__warning {
+    padding: 12px 16px;
+    background-color: #fff7e6;
+    border-radius: 8px;
+    border-left: 3px solid #faad14;
+    font-size: 14px;
+    color: #d48806;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* 错误提示 */
+  &__error {
+    padding: 12px 16px;
+    background-color: #fff2f0;
+    border-radius: 8px;
+    border-left: 3px solid #ff4d4f;
+    font-size: 14px;
+    color: #cf1322;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* 成功提示 */
+  &__success {
+    padding: 12px 16px;
+    background-color: #f6ffed;
+    border-radius: 8px;
+    border-left: 3px solid #52c41a;
+    font-size: 14px;
+    color: #389e0d;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* 空状态 */
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    padding: 40px 20px;
+
+    &-icon {
+      font-size: 64px;
+      color: #d9d9d9;
+      margin-bottom: 16px;
+    }
+
+    &-text {
+      font-size: 14px;
+      color: #999999;
+      margin-bottom: 20px;
+    }
+  }
+
+  /* 券码显示 */
+  &__code-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  &__code {
+    flex: 1;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    color: #333333;
+    font-weight: 600;
+  }
+
+  /* 用户信息 */
+  &__user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  &__user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #d9d9d9;
+  }
+
+  &__user-details {
+    flex: 1;
+  }
+
+  &__user-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333333;
+    margin-bottom: 4px;
+  }
+
+  &__user-phone {
+    font-size: 13px;
+    color: #999999;
+  }
+}

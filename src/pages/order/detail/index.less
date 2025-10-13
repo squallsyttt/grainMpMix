@@ -1,0 +1,221 @@
+/**
+ * 订单详情页面样式
+ */
+
+.order-detail {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 20px;
+
+  /* 骨架屏 */
+  &__skeleton {
+    padding: 20px;
+  }
+
+  /* 卡片 */
+  &__card {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+
+  /* 顶部状态栏 */
+  &__status-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+    margin-bottom: 12px;
+  }
+
+  &__status-icon {
+    margin-bottom: 12px;
+  }
+
+  &__status-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  &__status-desc {
+    font-size: 13px;
+    opacity: 0.9;
+  }
+
+  /* 订单号行 */
+  &__order-no-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  &__order-no {
+    flex: 1;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    color: #333333;
+    font-weight: 600;
+  }
+
+  /* 区域标题 */
+  &__section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 16px;
+  }
+
+  /* 信息行 */
+  &__info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__label {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: #999999;
+    width: 80px;
+  }
+
+  &__value {
+    flex: 1;
+    font-size: 14px;
+    color: #333333;
+  }
+
+  /* 金额信息 */
+  &__amount-section {
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+  }
+
+  &__amount-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+      padding-top: 12px;
+      border-top: 1px solid #e0e0e0;
+    }
+  }
+
+  &__amount-label {
+    font-size: 14px;
+    color: #666666;
+  }
+
+  &__amount-value {
+    font-size: 14px;
+    color: #333333;
+    font-weight: 500;
+
+    &--original {
+      text-decoration: line-through;
+      color: #999999;
+    }
+
+    &--discount {
+      color: #FF6B35;
+    }
+
+    &--final {
+      font-size: 20px;
+      font-weight: 600;
+      color: #FF6B35;
+    }
+  }
+
+  /* 门店信息可点击区域 */
+  &__store-clickable {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:active {
+      opacity: 0.6;
+    }
+  }
+
+  &__store-info {
+    flex: 1;
+  }
+
+  &__store-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333333;
+    margin-bottom: 4px;
+  }
+
+  &__store-address {
+    font-size: 13px;
+    color: #666666;
+    line-height: 1.5;
+  }
+
+  /* 配送方式标识 */
+  &__delivery-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+
+    &--self-pickup {
+      color: #1890ff;
+      background-color: #e6f7ff;
+      border: 1px solid #91d5ff;
+    }
+
+    &--delivery {
+      color: #52c41a;
+      background-color: #f6ffed;
+      border: 1px solid #b7eb8f;
+    }
+  }
+
+  /* 配送占位信息 */
+  &__delivery-placeholder {
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  &__delivery-placeholder-text {
+    font-size: 13px;
+    color: #999999;
+    line-height: 1.6;
+  }
+}

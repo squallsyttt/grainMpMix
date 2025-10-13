@@ -1,0 +1,148 @@
+/**
+ * 核销券详情页面样式
+ */
+
+.voucher-detail {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 20px;
+
+  /* 骨架屏 */
+  &__skeleton {
+    padding: 20px;
+  }
+
+  /* 基本信息卡片 */
+  &__card {
+    background-color: #ffffff;
+    padding: 20px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    flex: 1;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333333;
+    line-height: 1.4;
+  }
+
+  &__description {
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  &__value-row {
+    margin-bottom: 12px;
+  }
+
+  &__value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #FF6B35;
+  }
+
+  &__expire-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  &__expire {
+    font-size: 13px;
+    color: #999999;
+
+    &--warning {
+      color: #faad14;
+      font-weight: 500;
+    }
+  }
+
+  &__warning {
+    padding: 8px 12px;
+    background-color: #fff7e6;
+    border-radius: 6px;
+    border-left: 3px solid #faad14;
+    font-size: 13px;
+    color: #d48806;
+  }
+
+  /* 二维码区域 */
+  &__qrcode-section {
+    background-color: #ffffff;
+    padding: 0;
+  }
+
+  /* 通用区域 */
+  &__section {
+    background-color: #ffffff;
+    padding: 20px;
+
+    &-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333333;
+      margin-bottom: 16px;
+    }
+  }
+
+  /* 订单行 */
+  &__order-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:active {
+      opacity: 0.6;
+    }
+  }
+
+  &__order-no {
+    flex: 1;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    color: #333333;
+    font-weight: 500;
+  }
+
+  /* 信息行 */
+  &__info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__label {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: #999999;
+    width: 80px;
+  }
+
+  &__value-text {
+    flex: 1;
+    font-size: 14px;
+    color: #333333;
+  }
+}
