@@ -295,57 +295,59 @@ function Mine(): React.ReactElement {
   }, [])
 
   /**
-   * 未登录状态
-   */
-  if (!isLoggedIn) {
-    return (
-      <View className="mine-page">
-        <View className="mine-page__login-prompt">
-          <Empty description="请先登录" />
-          <View
-            className="mine-page__login-btn"
-            onClick={() => Taro.navigateTo({ url: '/pages/login/index' })}
-          >
-            立即登录
-          </View>
-        </View>
-      </View>
-    )
-  }
-
-  /**
-   * 已登录状态
+   * 渲染主页面内容(登录和未登录都显示)
    */
   return (
     <View className="mine-page">
-      {/* 用户信息卡片 */}
+      {/* 用户信息卡片(未登录时显示"点击登录") */}
       <UserInfoCard userInfo={userInfo} isLoggedIn={isLoggedIn} />
 
       {/* 核销券统计卡片 */}
-      <VoucherStatsCard
-        stats={voucherStats}
-        loading={loading}
-        onRetry={error ? handleRetry : undefined}
-      />
-
-      {/* 订单统计入口 */}
-      <View className="mine-page__order-entry" onClick={handleOrdersClick}>
-        <View className="mine-page__order-entry-content">
-          <Text className="mine-page__order-entry-title">我的订单</Text>
-          {orderStats && orderStats.total > 0 && (
-            <Text className="mine-page__order-entry-count">共 {orderStats.total} 单</Text>
-          )}
-        </View>
-        <View className="mine-page__order-entry-action">
-          {orderStats && orderStats.pending > 0 && (
-            <View className="mine-page__order-entry-badge">{orderStats.pending}</View>
-          )}
+      {isLoggedIn ? (
+        <VoucherStatsCard
+          stats={voucherStats}
+          loading={loading}
+          onRetry={error ? handleRetry : undefined}
+        />
+      ) : (
+        <View className="mine-page__login-guide" onClick={() => Taro.navigateTo({ url: '/pages/login/index' })}>
+          <View className="mine-page__login-guide-content">
+            <Text className="mine-page__login-guide-title">登录查看核销券</Text>
+            <Text className="mine-page__login-guide-desc">查看待核销、已核销等券信息</Text>
+          </View>
           <ArrowRight size={16} color="#999" />
         </View>
-      </View>
+      )}
 
-      {/* 最近核销券列表 */}
-      <View className="mine-page__recent-section">
+      {/* 订单统计入口 */}
+      {isLoggedIn ? (
+        <View className="mine-page__order-entry" onClick={handleOrdersClick}>
+          <View className="mine-page__order-entry-content">
+            <Text className="mine-page__order-entry-title">我的订单</Text>
+            {orderStats && orderStats.total > 0 && (
+              <Text className="mine-page__order-entry-count">共 {orderStats.total} 单</Text>
+            )}
+          </View>
+          <View className="mine-page__order-entry-action">
+            {orderStats && orderStats.pending > 0 && (
+              <View className="mine-page__order-entry-badge">{orderStats.pending}</View>
+            )}
+            <ArrowRight size={16} color="#999" />
+          </View>
+        </View>
+      ) : (
+        <View className="mine-page__login-guide" onClick={() => Taro.navigateTo({ url: '/pages/login/index' })}>
+          <View className="mine-page__login-guide-content">
+            <Text className="mine-page__login-guide-title">登录查看订单</Text>
+            <Text className="mine-page__login-guide-desc">查看订单状态、物流信息等</Text>
+          </View>
+          <ArrowRight size={16} color="#999" />
+        </View>
+      )}
+
+      {/* 最近核销券列表 - 仅登录后显示 */}
+      {isLoggedIn && (
+        <View className="mine-page__recent-section">
         <View className="mine-page__section-header">
           <Text className="mine-page__section-title">最近核销券</Text>
           {!vouchersLoading && recentVouchers.length > 0 && voucherStats && voucherStats.pending > 3 && (
@@ -417,8 +419,10 @@ function Mine(): React.ReactElement {
           </View>
         )}
       </View>
+      )}
 
-      {/* 最近订单列表 */}
+      {/* 最近订单列表 - 仅登录后显示 */}
+      {isLoggedIn && (
       <View className="mine-page__recent-section">
         <View className="mine-page__section-header">
           <Text className="mine-page__section-title">最近订单</Text>
@@ -489,6 +493,7 @@ function Mine(): React.ReactElement {
           </View>
         )}
       </View>
+      )}
 
       {/* 功能列表 */}
       <View className="mine-page__function-section">

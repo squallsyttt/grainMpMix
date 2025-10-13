@@ -107,6 +107,41 @@
     justify-content: center;
   }
 
+  // 登录引导区域
+  &__login-guide {
+    background: #ffffff;
+    margin: 8px 16px;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:active {
+      background: #f7f7f7;
+    }
+  }
+
+  &__login-guide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__login-guide-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333333;
+  }
+
+  &__login-guide-desc {
+    font-size: 13px;
+    color: #999999;
+  }
+
   // 最近核销券区域
   &__recent-section {
     background: #ffffff;
