@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { Home, Store, Cart, Notice, User } from '@nutui/icons-react-taro';
-import { Badge } from '@nutui/nutui-react-taro';
 import { useCart } from '../contexts/CartContext';
 import './index.less';
 
@@ -101,18 +100,14 @@ const CustomTabBar: React.FC = () => {
             onClick={() => switchTab(index, item.pagePath)}
           >
             <View className='tab-icon'>
-              {item.showBadge ? (
-                <Badge
-                  value={totalCartCount > 0 ? totalCartCount : undefined}
-                  max={99}
-                  top="0"
-                  right="0"
-                >
+              {item.showBadge && totalCartCount > 0 ? (
+                <View className='tab-icon-badge-wrapper'>
                   <IconComponent
                     size={22}
                     color={isSelected ? '#FF6B35' : '#8a8a8a'}
                   />
-                </Badge>
+                  <View className='tab-badge'>{totalCartCount > 99 ? '99+' : totalCartCount}</View>
+                </View>
               ) : (
                 <IconComponent
                   size={22}
