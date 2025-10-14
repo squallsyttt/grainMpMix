@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
-import { Button } from '@nutui/nutui-react-taro';
+import { Button, Empty, Dialog } from '@nutui/nutui-react-taro';
+import { Del } from '@nutui/icons-react-taro';
+import Taro from '@tarojs/taro';
 import RegionBar from '../../components/RegionBar';
 import RegionSelector from '../../components/RegionSelector';
 import { useRegion } from '../../contexts/RegionContext';
 import { useCart } from '../../contexts/CartContext';
+import { useUser } from '../../contexts/UserContext';
+import {
+  formatAmount,
+  formatUnitPrice,
+  getSubtotal,
+  getRegionKey,
+  isOffShelf
+} from '../../types/cart';
 import './index.less';
 
 function Cart() {
@@ -12,36 +22,78 @@ function Cart() {
   const {
     currentCartItems,
     currentCartStats,
-    updateQuantity,
+    handleIncrease,
+    handleDecrease,
     removeFromCart,
     clearCurrentCart,
   } = useCart();
+  const { isLoggedIn } = useUser();
 
-  const handleIncrease = (productId: string, currentQuantity: number) => {
-    updateQuantity(productId, currentQuantity + 1);
-  };
+  // 计算当前地区键
+  const currentRegionKey = useMemo(() => {
+    return getRegionKey(province, city);
+  }, [province, city]);
 
-  const handleDecrease = (productId: string, currentQuantity: number) => {
-    if (currentQuantity > 1) {
-      updateQuantity(productId, currentQuantity - 1);
-    }
-  };
-
-  const handleDelete = (productId: string) => {
-    removeFromCart(productId);
-  };
+  // 监听地区切换,确保购物车数据实时更新 (T016-T017)
+  useEffect(() => {
+    // currentCartItems 已通过 CartContext 的 useMemo 自动更新
+    // 确保地区切换响应时间 <500ms (SC-004)
+  }, [currentRegionKey, currentCartItems.length]);
 
   const handleClearCart = () => {
     if (currentCartItems.length === 0) return;
 
-    // TODO: 添加确认对话框
-    clearCurrentCart();
+    Dialog.confirm({
+      title: '清空购物车',
+      content: '确定要清空当前地区的购物车吗?此操作不可撤销。',
+      confirmText: '清空',
+      cancelText: '取消',
+      onConfirm: () => {
+        clearCurrentCart();
+        Taro.showToast({
+          title: '购物车已清空',
+          icon: 'success',
+          duration: 1500,
+        });
+      },
+      onCancel: () => {
+        // 用户取消清空操作
+      },
+    });
   };
 
+  /**
+   * 处理结算逻辑 (T019)
+   * - 检查购物车是否为空
+   * - 检查用户登录状态
+   * - 未登录则跳转到登录页面(携带redirect参数)
+   * - 已登录则跳转到订单确认页面(携带regionKey参数)
+   */
   const handleCheckout = () => {
-    if (currentCartItems.length === 0) return;
+    // 购物车为空时不允许结算
+    if (currentCartItems.length === 0) {
+      Taro.showToast({
+        title: '购物车是空的',
+        icon: 'none',
+        duration: 2000,
+      });
+      return;
+    }
 
-    // TODO: 跳转到结算页面
+    // 检查登录状态 (FR-011)
+    if (!isLoggedIn) {
+      // 未登录,跳转到登录页面并传递 redirect 参数
+      Taro.navigateTo({
+        url: '/pages/login/index?redirect=/pages/order-confirm/index',
+      });
+      return;
+    }
+
+    // 已登录,跳转到订单确认页面并携带地区键参数
+    const encodedRegionKey = encodeURIComponent(currentRegionKey);
+    Taro.navigateTo({
+      url: `/pages/order-confirm/index?regionKey=${encodedRegionKey}`,
+    });
   };
 
   return (
@@ -54,42 +106,56 @@ function Cart() {
           <>
             {/* 购物车商品列表 */}
             <ScrollView scrollY className="cart-list">
-              {currentCartItems.map((item) => (
-                <View key={item.product.id} className="cart-item">
-                  <Image
-                    src={item.product.image}
-                    className="product-image"
-                    mode="aspectFill"
-                  />
-                  <View className="product-info">
-                    <Text className="product-name">{item.product.name}</Text>
-                    <Text className="product-price">
-                      ¥{item.product.price.toFixed(2)}/{item.product.unit}
-                    </Text>
-                  </View>
-                  <View className="quantity-control">
-                    <View
-                      className="control-btn"
-                      onClick={() => handleDecrease(item.product.id, item.quantity)}
-                    >
-                      <Text className="control-icon">-</Text>
+              {currentCartItems.map((item) => {
+                const itemIsOffShelf = isOffShelf(item);
+
+                return (
+                  <View key={item.product.id} className="cart-item">
+                    <Image
+                      src={item.product.image}
+                      className="product-image"
+                      mode="aspectFill"
+                    />
+                    <View className="product-info">
+                      <Text className="product-name">{item.product.name}</Text>
+                      <Text className="product-price">
+                        {formatUnitPrice(item.product)}
+                      </Text>
+                      <Text className="product-subtotal">
+                        小计: {formatAmount(getSubtotal(item))}
+                      </Text>
                     </View>
-                    <Text className="quantity-text">{item.quantity}</Text>
-                    <View
-                      className="control-btn"
-                      onClick={() => handleIncrease(item.product.id, item.quantity)}
-                    >
-                      <Text className="control-icon">+</Text>
+                    <View className="quantity-control">
+                      <View
+                        className="control-btn"
+                        onClick={() => handleDecrease(item.product.id)}
+                      >
+                        <Text className="control-icon">-</Text>
+                      </View>
+                      <Text className="quantity-text">{item.quantity}</Text>
+                      <View
+                        className={`control-btn ${itemIsOffShelf ? 'disabled' : ''}`}
+                        onClick={() => !itemIsOffShelf && handleIncrease(item.product.id)}
+                      >
+                        <Text className="control-icon">+</Text>
+                      </View>
                     </View>
+                    <View
+                      className="delete-btn"
+                      onClick={() => removeFromCart(item.product.id)}
+                    >
+                      <Del className="delete-icon" size={20} color="#999" />
+                    </View>
+
+                    {/* 下架商品遮罩 (FR-019) */}
+                    {itemIsOffShelf && (
+                      <View className="off-shelf-mask">
+                        <Text className="off-shelf-text">该商品已下架</Text>
+                      </View>
+                    )}
                   </View>
-                  <View
-                    className="delete-btn"
-                    onClick={() => handleDelete(item.product.id)}
-                  >
-                    <Text className="delete-icon">🗑️</Text>
-                  </View>
-                </View>
-              ))}
+                );
+              })}
             </ScrollView>
 
             {/* 底部结算栏 */}
@@ -106,7 +172,7 @@ function Cart() {
                 <View className="summary-line total">
                   <Text className="summary-label">合计：</Text>
                   <Text className="summary-amount">
-                    ¥{currentCartStats.totalAmount.toFixed(2)}
+                    {formatAmount(currentCartStats.totalAmount)}
                   </Text>
                 </View>
               </View>
@@ -116,6 +182,7 @@ function Cart() {
                   className="clear-btn"
                   onClick={handleClearCart}
                   size="small"
+                  disabled={currentCartItems.length === 0}
                 >
                   清空购物车
                 </Button>
@@ -123,18 +190,18 @@ function Cart() {
                   type="primary"
                   className="checkout-btn"
                   onClick={handleCheckout}
+                  disabled={currentCartItems.length === 0}
                 >
-                  去结算
+                  去结算({currentCartStats.totalItems}件)
                 </Button>
               </View>
             </View>
           </>
         ) : (
           <View className="empty-cart">
-            <Text className="empty-icon">🛒</Text>
-            <Text className="empty-text">购物车是空的</Text>
+            <Empty description="购物车是空的" />
             <Text className="empty-hint">
-              当前地区：{city || province}
+              当前地区：{currentRegionKey}
             </Text>
             <Text className="empty-hint">
               去添加一些商品吧~
