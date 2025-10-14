@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useRef, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import Taro from '@tarojs/taro';
 import {
   RegionalCart,
@@ -30,9 +30,9 @@ interface CartContextType {
   removeFromCart: (productId: string) => void;
   // 更新当前地区购物车商品数量
   updateQuantity: (productId: string, quantity: number) => void;
-  // 增加商品数量(带防抖和库存验证)
+  // 增加商品数量(带库存验证)
   handleIncrease: (productId: string) => void;
-  // 减少商品数量(带防抖和库存验证)
+  // 减少商品数量(带库存验证)
   handleDecrease: (productId: string) => void;
   // 清空当前地区购物车
   clearCurrentCart: () => void;
@@ -48,29 +48,6 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 interface CartProviderProps {
   children: ReactNode;
-}
-
-/**
- * 防抖工具函数
- * @param func - 需要防抖的函数
- * @param delay - 延迟时间(毫秒)
- * @returns 防抖后的函数
- */
-function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  delay: number
-): (...args: Parameters<T>) => void {
-  let timeoutId: NodeJS.Timeout | null = null;
-
-  return (...args: Parameters<T>) => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      func(...args);
-      timeoutId = null;
-    }, delay);
-  };
 }
 
 export function CartProvider({ children }: CartProviderProps) {
@@ -222,15 +199,8 @@ export function CartProvider({ children }: CartProviderProps) {
     saveCart(newCart);
   };
 
-  // 防抖函数引用,保持函数引用稳定
-  const debouncedUpdateQuantityRef = useRef(
-    debounce((productId: string, quantity: number) => {
-      updateQuantity(productId, quantity);
-    }, 300)
-  );
-
   /**
-   * 增加商品数量(带防抖和库存验证)
+   * 增加商品数量(带库存验证)
    * @param productId - 商品ID
    */
   const handleIncrease = (productId: string): void => {
@@ -272,12 +242,12 @@ export function CartProvider({ children }: CartProviderProps) {
       return;
     }
 
-    // 使用防抖更新数量
-    debouncedUpdateQuantityRef.current(productId, item.quantity + 1);
+    // 直接更新数量，立即响应用户操作
+    updateQuantity(productId, item.quantity + 1);
   };
 
   /**
-   * 减少商品数量(带防抖和库存验证)
+   * 减少商品数量(带库存验证)
    * @param productId - 商品ID
    */
   const handleDecrease = (productId: string): void => {
@@ -301,8 +271,8 @@ export function CartProvider({ children }: CartProviderProps) {
       return;
     }
 
-    // 使用防抖更新数量
-    debouncedUpdateQuantityRef.current(productId, item.quantity - 1);
+    // 直接更新数量，立即响应用户操作
+    updateQuantity(productId, item.quantity - 1);
   };
 
   // 清空当前地区购物车
