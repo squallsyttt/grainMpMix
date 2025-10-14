@@ -4,9 +4,11 @@ import Taro, { useRouter } from '@tarojs/taro'
 import { Button, Rate, Tag, Divider, Toast, ActionSheet } from '@nutui/nutui-react-taro'
 import { Cart, Star, Service, Location } from '@nutui/icons-react-taro'
 import { Product } from '../../../types/product'
+import { Product as CartProduct } from '../../../types/cart'
 import MockService from '../../../data/mock'
 import { processImageUrl } from '../../../utils/imageHelper'
 import { formatPrice, formatCount } from '../../../utils/dataHelper'
+import { useCart } from '../../../contexts/CartContext'
 import './index.less'
 
 /**
@@ -15,6 +17,7 @@ import './index.less'
 const ProductDetail: React.FC = () => {
   const router = useRouter()
   const { id } = router.params
+  const { addToCart } = useCart()
 
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -75,12 +78,20 @@ const ProductDetail: React.FC = () => {
   const handleAddToCart = (): void => {
     if (!product) return
 
-    Taro.showToast({
-      title: '已加入购物车',
-      icon: 'success',
-    })
+    // 转换商品详情的 Product 为购物车的 Product 格式
+    const cartProduct: CartProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0], // 使用第一张图片
+      unit: '件', // 默认单位，实际项目中应该从商品数据中获取
+      stock: product.stock,
+      status: product.status,
+      description: product.description,
+    }
 
-    // TODO: 实际项目中需要调用购物车 API
+    // 调用 CartContext 的 addToCart 方法
+    addToCart(cartProduct, 1)
   }
 
   /**
