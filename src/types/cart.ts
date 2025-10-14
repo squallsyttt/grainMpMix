@@ -3,6 +3,8 @@
  * Feature: 地区化购物车功能完善
  */
 
+import Taro from '@tarojs/taro';
+
 // ==================== 商品实体 ====================
 
 /**
@@ -204,15 +206,16 @@ export const formatUnitPrice = (product: Product): string => {
 const STORAGE_KEY = 'regional_cart_data';
 
 /**
- * 从localStorage安全读取购物车数据
+ * 从Taro存储安全读取购物车数据
  * @returns 购物车数据,读取失败返回空对象
  */
 export const loadCartFromStorage = (): RegionalCart => {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
+    const data = Taro.getStorageSync(STORAGE_KEY);
     if (!data) return {};
 
-    const parsed = JSON.parse(data);
+    // Taro.getStorageSync 返回的数据已经是解析后的对象
+    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
     if (typeof parsed !== 'object' || parsed === null) {
       console.warn('[Cart] Invalid cart data format, resetting to empty');
       return {};
@@ -235,21 +238,21 @@ export const loadCartFromStorage = (): RegionalCart => {
 };
 
 /**
- * 安全保存购物车数据到localStorage
+ * 安全保存购物车数据到Taro存储
  * @param cart - 购物车数据
  * @returns 是否保存成功
  */
 export const saveCartToStorage = (cart: RegionalCart): boolean => {
   try {
-    const serialized = JSON.stringify(cart);
-    localStorage.setItem(STORAGE_KEY, serialized);
+    // Taro.setStorageSync 可以直接存储对象
+    Taro.setStorageSync(STORAGE_KEY, cart);
     return true;
   } catch (error) {
-    if ((error as any).name === 'QuotaExceededError') {
-      console.error('[Cart] localStorage quota exceeded');
+    if ((error as any).errMsg?.includes('exceed')) {
+      console.error('[Cart] Storage quota exceeded');
       const cleaned = cleanExpiredCartItems(cart, 7 * 24 * 60 * 60 * 1000);
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
+        Taro.setStorageSync(STORAGE_KEY, cleaned);
         return true;
       } catch (retryError) {
         console.error('[Cart] Failed to save even after cleaning');
