@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
+import { Eye, Clock } from '@nutui/icons-react-taro';
 import Taro from '@tarojs/taro';
 import RegionBar from '../../components/RegionBar';
 import RegionSelector from '../../components/RegionSelector';
@@ -195,14 +196,19 @@ function News() {
             >
               <View className='article-content'>
                 <View className='article-header'>
-                  <Text className='article-category'>{article.category}</Text>
-                  <Text className='article-time'>{article.publishTime}</Text>
+                  <View className='article-category'>
+                    <Text className='category-text'>{article.category}</Text>
+                  </View>
+                  <View className='article-time'>
+                    <Clock size={12} color="#999" />
+                    <Text className='time-text'>{article.publishTime}</Text>
+                  </View>
                 </View>
                 <Text className='article-title'>{article.title}</Text>
                 <Text className='article-summary'>{article.summary}</Text>
                 <View className='article-footer'>
                   <View className='article-views'>
-                    <Text className='views-icon'>👁</Text>
+                    <Eye size={14} color="#FF6B35" />
                     <Text className='views-text'>{article.views}</Text>
                   </View>
                 </View>
