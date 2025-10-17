@@ -113,11 +113,11 @@
 
 /* ==================== 文章卡片 ==================== */
 
-// 淡入动画
+// 淡入动画（优化版本，更快显示）
 @keyframes fadeInUp {
   from {
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 0.3; // 从30%透明度开始，而不是完全透明
+    transform: translateY(10px); // 从10px开始，而不是20px
   }
   to {
     opacity: 1;
@@ -141,15 +141,15 @@
   box-sizing: border-box;
 
   // 添加渐入动画
-  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 
-  // 为每个卡片添加延迟，创建级联效果
+  // 为每个卡片添加延迟，创建级联效果（快速级联）
   &:nth-child(1) { animation-delay: 0s; }
-  &:nth-child(2) { animation-delay: 0.08s; }
-  &:nth-child(3) { animation-delay: 0.16s; }
-  &:nth-child(4) { animation-delay: 0.24s; }
-  &:nth-child(5) { animation-delay: 0.32s; }
-  &:nth-child(6) { animation-delay: 0.4s; }
+  &:nth-child(2) { animation-delay: 0.05s; }
+  &:nth-child(3) { animation-delay: 0.1s; }
+  &:nth-child(4) { animation-delay: 0.15s; }
+  &:nth-child(5) { animation-delay: 0.2s; }
+  &:nth-child(6) { animation-delay: 0.25s; }
 
   // 装饰性元素
   &::before {
@@ -298,7 +298,24 @@
     align-self: center;
     position: relative;
     z-index: 1;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+
+    // 图片加载占位背景
+    background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
+
+    // 图片加载动画
+    animation: imageLoad 0.4s ease-out;
+  }
+
+  @keyframes imageLoad {
+    from {
+      opacity: 0.5; // 从50%透明度开始
+      transform: scale(0.98); // 轻微缩放
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   &:active .article-cover {
