@@ -17,8 +17,9 @@ export default defineAppConfig({
     // 订单相关页面
     'pages/order/list/index',
     'pages/order/detail/index',
-    // 商家扫码核销页面
-    'pages/merchant-scan/index'
+    // 商家相关页面
+    'pages/merchant-scan/index',
+    'pages/merchant/bind/index'
   ],
   window: {
     backgroundTextStyle: 'light',

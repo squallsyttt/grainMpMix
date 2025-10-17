@@ -14,7 +14,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { View, Image, Text } from '@tarojs/components'
 import Taro, { usePullDownRefresh } from '@tarojs/taro'
 import { Empty, Skeleton, Button } from '@nutui/nutui-react-taro'
-import { ArrowRight, Location, Service, Message, Setting, Del, Transit } from '@nutui/icons-react-taro'
+import { ArrowRight, Location, Service, Message, Setting, Del, Transit, Store } from '@nutui/icons-react-taro'
 import { useUser } from '@/contexts/UserContext'
 import VoucherStatsCard from '@/components/VoucherStatsCard'
 import UserInfoCard from '@/components/UserInfoCard'
@@ -48,6 +48,12 @@ function Mine(): React.ReactElement {
       title: '收货地址',
       icon: Location,
       url: '/pages/address/list/index'
+    },
+    {
+      id: 'merchant',
+      title: '商家操作页',
+      icon: Store,
+      url: '/pages/merchant/bind/index'
     },
     {
       id: 'service',

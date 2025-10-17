@@ -94,7 +94,7 @@ async function request<T = any>(options: RequestOptions): Promise<ApiResponse<T>
       if (!token) {
         // Token不存在,跳转登录页
         Taro.showToast({
-          title: '请先登录',
+          title: '请先绑定商家账户',
           icon: 'none',
           duration: 2000
         })

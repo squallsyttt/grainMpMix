@@ -1,49 +1,72 @@
 /**
  * MerchantCard 组件样式
- *
- * BEM命名规范,8px间距,卡片阴影和圆角
- * US4增强:调整多维度信息的布局和间距,确保视觉层次清晰
+ * 专业精致的设计风格
  */
 
 .merchant-card {
   display: flex;
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  border-radius: 16px;
+  padding: 0; // 移除padding，让图片贴边
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  // 装饰性背景
+  &::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -10%;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(
+      circle,
+      rgba(255, 107, 53, 0.04) 0%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
   &:active {
-    background-color: #f7f7f7;
-    transform: scale(0.98);
+    transform: translateY(-2px) scale(0.98);
+    box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15);
+    border-color: rgba(255, 107, 53, 0.2);
+
+    &::before {
+      opacity: 1;
+    }
   }
 
-  &__logo {
+  /* Logo区域 */
+  &__logo-wrapper {
     position: relative;
     flex-shrink: 0;
-    margin-right: 16px;
+    width: 120px;
+    align-self: stretch; // 拉伸到整个高度
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 0 16px 16px; // 上、右、下、左留白一致
+    box-sizing: border-box;
+    z-index: 1;
   }
 
-  &__logo-badge {
-    position: absolute;
-    bottom: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 2px 8px;
-    background-color: #52c41a;
-    color: #ffffff;
-    font-size: 10px;
-    border-radius: 10px;
-    white-space: nowrap;
-  }
-
+  /* 内容区域 */
   &__content {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 16px; // 只给内容区域padding
     min-width: 0; // 防止flex子元素溢出
+    position: relative;
+    z-index: 1;
   }
 
   &__header {
@@ -53,35 +76,61 @@
   }
 
   &__name {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333333;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1a1a;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     flex: 1;
+    letter-spacing: 0.3px;
   }
 
+  &__badge {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(82, 196, 26, 0.3);
+  }
+
+  /* 信息行 */
   &__info {
     display: flex;
     align-items: center;
-    gap: 16px;
-    font-size: 14px;
-    color: #666666;
+    gap: 12px;
+    font-size: 13px;
+    color: #666;
   }
 
   &__region {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 136, 86, 0.08) 100%);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 107, 53, 0.15);
+    font-size: 12px;
+    color: #FF6B35;
+    font-weight: 600;
+    line-height: 1;
+    flex-shrink: 0;
   }
 
   &__years {
     flex-shrink: 0;
-    color: #999999;
+    color: #999;
+    font-size: 12px;
+    font-weight: 500;
   }
 
-  &__rating-wrapper {
+  /* 评分 */
+  &__rating {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -89,17 +138,61 @@
 
   &__rating-text {
     font-size: 14px;
-    font-weight: 500;
-    color: #ff6b35;
+    font-weight: 700;
+    color: #FF6B35;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    line-height: 1;
   }
 
+  /* 标签 */
   &__tags {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-wrap: nowrap; // 不换行
+    gap: 6px;
+    overflow: hidden; // 隐藏溢出
   }
 
   &__tag {
-    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px; // 减小padding
+    background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    flex-shrink: 0; // 防止标签被压缩
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: scale(0.95);
+      background: linear-gradient(135deg, #f0f2f5 0%, #e8eaed 100%);
+    }
+  }
+
+  &__tag-text {
+    font-size: 11px;
+    color: #666;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.3px;
+    white-space: nowrap; // 标签文字不换行
+  }
+}
+
+/* ==================== 响应式优化 ==================== */
+
+@media (min-width: 375px) {
+  .merchant-card {
+    &__name {
+      font-size: 18px;
+    }
+
+    &__info {
+      font-size: 14px;
+    }
+
+    &__tag-text {
+      font-size: 12px;
+    }
   }
 }

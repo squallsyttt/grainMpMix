@@ -1,22 +1,24 @@
 /**
  * 个人中心页面样式
  * Feature: 核销券个人中心主页
+ * 设计理念: 现代、专业、精致
  */
 
 .mine-page {
   min-height: 100vh;
   width: 100%;
   max-width: 100vw;
-  background: #f7f7f7;
+  background: linear-gradient(180deg, #f5f7fa 0%, #ffffff 100%);
   padding-bottom: 70px; // 为 TabBar 预留空间
   box-sizing: border-box;
   overflow-x: hidden;
 
   // 页头区域
   &__header {
-    background: #ffffff;
-    padding: 16px;
-    margin-bottom: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
   }
 
   &__user-info {
@@ -25,9 +27,10 @@
   }
 
   &__nickname {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
-    color: #333333;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   // 未登录提示
@@ -41,51 +44,58 @@
 
   &__login-btn {
     margin-top: 24px;
-    padding: 12px 32px;
-    background: #ff6b00;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #ffffff;
     font-size: 16px;
+    font-weight: 500;
     border-radius: 24px;
     cursor: pointer;
-    transition: opacity 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 
     &:active {
-      opacity: 0.8;
+      transform: translateY(2px);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     }
   }
 
   // 订单统计入口
   &__order-entry {
     background: #ffffff;
-    margin: 8px 16px;
-    padding: 16px;
-    border-radius: 8px;
+    margin: 0 16px 12px;
+    padding: 18px 20px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 
     &:active {
-      background: #f7f7f7;
+      transform: scale(0.98);
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
     }
   }
 
   &__order-entry-content {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
 
   &__order-entry-title {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
-    color: #333333;
+    color: #1a1a1a;
+    letter-spacing: 0.3px;
   }
 
   &__order-entry-count {
     font-size: 13px;
-    color: #999999;
+    color: #8e8e93;
+    font-weight: 500;
   }
 
   &__order-entry-action {
@@ -95,32 +105,37 @@
   }
 
   &__order-entry-badge {
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    background: #ff0000;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
     color: #ffffff;
     font-size: 12px;
-    border-radius: 9px;
+    font-weight: 600;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 8px rgba(255, 82, 82, 0.3);
   }
 
   // 登录引导区域
   &__login-guide {
-    background: #ffffff;
-    margin: 8px 16px;
-    padding: 16px;
-    border-radius: 8px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    margin: 0 16px 12px;
+    padding: 20px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(102, 126, 234, 0.1);
 
     &:active {
-      background: #f7f7f7;
+      transform: scale(0.98);
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
     }
   }
 
@@ -128,25 +143,28 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
   }
 
   &__login-guide-title {
-    font-size: 15px;
-    font-weight: 500;
-    color: #333333;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: 0.3px;
   }
 
   &__login-guide-desc {
     font-size: 13px;
-    color: #999999;
+    color: #8e8e93;
+    line-height: 1.4;
   }
 
   // 最近核销券区域
   &__recent-section {
     background: #ffffff;
-    margin: 8px 0;
-    padding: 16px;
+    margin: 0 0 12px;
+    padding: 20px 16px;
+    border-radius: 0;
   }
 
   &__section-header {
@@ -154,28 +172,49 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f5f7fa;
   }
 
   &__section-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333333;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: 0.5px;
+    position: relative;
+    padding-left: 12px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 18px;
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
   }
 
   &__view-all {
     display: flex;
     align-items: center;
     cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
 
     &:active {
-      opacity: 0.6;
+      background: #f5f7fa;
     }
   }
 
   &__view-all-text {
     font-size: 14px;
-    color: #999999;
+    color: #667eea;
     margin-right: 4px;
+    font-weight: 500;
   }
 
   // 券列表
@@ -188,28 +227,33 @@
   &__voucher-item {
     display: flex;
     align-items: center;
-    padding: 12px;
-    background: #fafafa;
-    border-radius: 8px;
+    padding: 14px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 12px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.04);
 
     &:active {
-      background: #f0f0f0;
+      transform: translateX(4px);
+      box-shadow: 0 2px 12px rgba(102, 126, 234, 0.1);
+      border-color: rgba(102, 126, 234, 0.2);
     }
   }
 
   &__voucher-image {
     width: 80px;
     height: 80px;
-    border-radius: 8px;
+    border-radius: 10px;
     flex-shrink: 0;
-    background: #e0e0e0;
+    background: linear-gradient(135deg, #e8eaf6 0%, #f5f7fa 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
   &__voucher-content {
     flex: 1;
-    margin-left: 12px;
+    margin-left: 14px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -218,21 +262,23 @@
 
   &__voucher-title {
     font-size: 15px;
-    font-weight: 500;
-    color: #333333;
+    font-weight: 600;
+    color: #1a1a1a;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
   }
 
   &__voucher-product {
     font-size: 13px;
-    color: #666666;
+    color: #6c757d;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     margin-bottom: 8px;
+    line-height: 1.4;
   }
 
   &__voucher-footer {
@@ -242,26 +288,32 @@
 
   &__voucher-expire {
     font-size: 12px;
-    color: #ff6b00;
+    color: #ff6b6b;
+    font-weight: 500;
+    padding: 2px 8px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 4px;
   }
 
   &__voucher-arrow {
     flex-shrink: 0;
-    margin-left: 8px;
+    margin-left: 10px;
+    color: #d1d5db;
   }
 
   // 骨架屏
   &__voucher-skeleton {
     display: flex;
     align-items: center;
-    padding: 12px;
-    background: #fafafa;
-    border-radius: 8px;
+    padding: 14px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
   &__voucher-skeleton-content {
     flex: 1;
-    margin-left: 12px;
+    margin-left: 14px;
     display: flex;
     flex-direction: column;
   }
@@ -271,14 +323,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 32px 16px;
+    padding: 40px 16px;
   }
 
   // 功能列表区域
   &__function-section {
     background: #ffffff;
-    margin: 8px 0;
+    margin: 0 0 12px;
     overflow: hidden;
+    border-radius: 0;
   }
 }
 
