@@ -77,7 +77,12 @@ const ProductCategories: React.FC = () => {
   if (loading) {
     return (
       <View className="product-categories">
-        <View className="category-title">产品分类</View>
+        <View className="category-header">
+          <View className="category-header__left">
+            <Text className="category-header__title">产品分类</Text>
+            <View className="category-header__decoration" />
+          </View>
+        </View>
         <View className="category-loading">加载中...</View>
       </View>
     )
@@ -89,7 +94,12 @@ const ProductCategories: React.FC = () => {
   if (error) {
     return (
       <View className="product-categories">
-        <View className="category-title">产品分类</View>
+        <View className="category-header">
+          <View className="category-header__left">
+            <Text className="category-header__title">产品分类</Text>
+            <View className="category-header__decoration" />
+          </View>
+        </View>
         <View className="category-error">
           <Text className="category-error__text">{error}</Text>
           <View className="category-error__retry" onClick={refetch}>
@@ -106,7 +116,12 @@ const ProductCategories: React.FC = () => {
   if (!index || tree.length === 0) {
     return (
       <View className="product-categories">
-        <View className="category-title">产品分类</View>
+        <View className="category-header">
+          <View className="category-header__left">
+            <Text className="category-header__title">产品分类</Text>
+            <View className="category-header__decoration" />
+          </View>
+        </View>
         <View className="category-empty">暂无分类数据</View>
       </View>
     )
@@ -123,7 +138,20 @@ const ProductCategories: React.FC = () => {
 
   return (
     <View className="product-categories">
-      <View className="category-title">产品分类</View>
+      {/* 标题栏：标题 + 查看更多 */}
+      <View className="category-header">
+        <View className="category-header__left">
+          <Text className="category-header__title">产品分类</Text>
+          <View className="category-header__decoration" />
+        </View>
+
+        {hasMore && (
+          <View className="category-header__more" onClick={handleViewMore}>
+            <Text className="category-header__more-text">查看更多</Text>
+            <ArrowRight size={14} className="category-header__more-icon" />
+          </View>
+        )}
+      </View>
 
       <View className="category-grid">
         {displayCategories.map((category) => (
@@ -135,13 +163,6 @@ const ProductCategories: React.FC = () => {
           />
         ))}
       </View>
-
-      {hasMore && (
-        <View className="category-more" onClick={handleViewMore}>
-          <Text className="category-more__text">查看更多</Text>
-          <ArrowRight size={16} color="#999" />
-        </View>
-      )}
     </View>
   )
 }
