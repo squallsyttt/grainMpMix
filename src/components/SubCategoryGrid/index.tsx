@@ -13,23 +13,23 @@ import './index.less'
 interface SubCategoryGridProps {
   /** 子分类列表 */
   categories: CategoryTreeNode[]
+  /** 当前分类信息 */
+  currentCategory?: CategoryTreeNode
   /** 默认显示数量(超出可展开) */
   defaultShowCount?: number
   /** 是否显示"全部"选项 */
   showAllOption?: boolean
-  /** 当前选中的分类ID */
-  currentCategoryId?: number
 }
 
 /**
- * 子分类网格组件
- * 网格布局展示子分类，支持展开/折叠
+ * 子分类网格组件 - 紧凑标签式
+ * 横向排列展示子分类，支持展开/折叠
  */
 const SubCategoryGrid: React.FC<SubCategoryGridProps> = ({
   categories,
-  defaultShowCount = 6,
-  showAllOption = true,
-  currentCategoryId
+  currentCategory,
+  defaultShowCount = 12,
+  showAllOption = true
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -42,23 +42,21 @@ const SubCategoryGrid: React.FC<SubCategoryGridProps> = ({
     : categories
 
   /**
+   * 点击当前分类信息卡 - 滚动到顶部
+   */
+  const handleCurrentCategoryClick = (): void => {
+    Taro.pageScrollTo({
+      scrollTop: 0,
+      duration: 300
+    })
+  }
+
+  /**
    * 点击子分类
    */
   const handleCategoryClick = (category: CategoryTreeNode): void => {
     Taro.navigateTo({
       url: `/pages/product-list/index?categoryId=${category.id}&name=${encodeURIComponent(category.name)}`
-    })
-  }
-
-  /**
-   * 点击"全部"
-   */
-  const handleAllClick = (): void => {
-    if (!currentCategoryId) return
-
-    // 刷新当前页面，回到父分类的"全部商品"视图
-    Taro.redirectTo({
-      url: `/pages/product-list/index?categoryId=${currentCategoryId}&showAll=true`
     })
   }
 
@@ -76,64 +74,80 @@ const SubCategoryGrid: React.FC<SubCategoryGridProps> = ({
 
   return (
     <View className="sub-category-grid">
-      <View className="sub-category-grid__header">
-        <Text className="sub-category-grid__title">子分类</Text>
-        <Text className="sub-category-grid__count">{categories.length}个</Text>
-      </View>
-
-      <View className="sub-category-grid__content">
-        {/* "全部"选项 */}
-        {showAllOption && (
-          <View
-            className="sub-category-grid__item"
-            onClick={handleAllClick}
-          >
-            <View className="sub-category-grid__item-image-wrapper">
-              <View className="sub-category-grid__item-all">
-                全部
-              </View>
-            </View>
-            <Text className="sub-category-grid__item-name">全部商品</Text>
-          </View>
-        )}
-
-        {/* 子分类列表 */}
-        {displayCategories.map((category) => (
-          <View
-            key={category.id}
-            className="sub-category-grid__item"
-            onClick={() => handleCategoryClick(category)}
-          >
-            <View className="sub-category-grid__item-image-wrapper">
-              <Image
-                className="sub-category-grid__item-image"
-                src={getFullImageUrl(category.image)}
-                lazyLoad
-              />
-            </View>
-            <Text className="sub-category-grid__item-name">{category.name}</Text>
-            {category.childlist && category.childlist.length > 0 && (
-              <Text className="sub-category-grid__item-count">
-                {category.childlist.length}个子分类
-              </Text>
-            )}
-          </View>
-        ))}
-      </View>
-
-      {/* 展开/折叠按钮 */}
-      {needsExpand && (
+      {/* 当前分类卡片 - 大号醒目 */}
+      {currentCategory && (
         <View
-          className="sub-category-grid__expand"
-          onClick={handleToggleExpand}
+          className="sub-category-grid__current-card"
+          onClick={handleCurrentCategoryClick}
         >
-          <Text className="sub-category-grid__expand-text">
-            {isExpanded ? '收起' : `展开全部${categories.length}个分类`}
-          </Text>
-          {isExpanded ? (
-            <ArrowUp size={14} color="#666" />
-          ) : (
-            <ArrowDown size={14} color="#666" />
+          <View className="sub-category-grid__current-card-image-wrapper">
+            <Image
+              className="sub-category-grid__current-card-image"
+              src={getFullImageUrl(currentCategory.image)}
+              lazyLoad
+            />
+          </View>
+          <View className="sub-category-grid__current-card-info">
+            <View className="sub-category-grid__current-card-header">
+              <Text className="sub-category-grid__current-card-name">
+                {currentCategory.name}
+              </Text>
+              <Text className="sub-category-grid__current-card-badge">当前分类</Text>
+            </View>
+            <Text className="sub-category-grid__current-card-desc">
+              包含 {categories.length} 个子分类
+            </Text>
+          </View>
+        </View>
+      )}
+
+      {/* 子分类列表 - 小标签密集排列 */}
+      {categories.length > 0 && (
+        <View className="sub-category-grid__children">
+          <View className="sub-category-grid__children-header">
+            <Text className="sub-category-grid__children-title">下级分类</Text>
+            <Text className="sub-category-grid__children-count">{categories.length}个</Text>
+          </View>
+
+          <View className="sub-category-grid__children-list">
+            {displayCategories.map((category) => (
+              <View
+                key={category.id}
+                className="sub-category-grid__child-item"
+                onClick={() => handleCategoryClick(category)}
+              >
+                <View className="sub-category-grid__child-item-image-wrapper">
+                  <Image
+                    className="sub-category-grid__child-item-image"
+                    src={getFullImageUrl(category.image)}
+                    lazyLoad
+                  />
+                </View>
+                <Text className="sub-category-grid__child-item-name">{category.name}</Text>
+                {category.childlist && category.childlist.length > 0 && (
+                  <Text className="sub-category-grid__child-item-count">
+                    ({category.childlist.length})
+                  </Text>
+                )}
+              </View>
+            ))}
+          </View>
+
+          {/* 展开/折叠按钮 */}
+          {needsExpand && (
+            <View
+              className="sub-category-grid__expand"
+              onClick={handleToggleExpand}
+            >
+              <Text className="sub-category-grid__expand-text">
+                {isExpanded ? '收起' : `展开全部${categories.length}个`}
+              </Text>
+              {isExpanded ? (
+                <ArrowUp size={12} color="#666" />
+              ) : (
+                <ArrowDown size={12} color="#666" />
+              )}
+            </View>
           )}
         </View>
       )}

@@ -108,13 +108,13 @@ const ProductListPage: React.FC = () => {
         <CategoryBreadcrumb path={categoryPath} showHome />
       )}
 
-      {/* 子分类网格 */}
+      {/* 子分类网格 - 只有当有子分类时才显示 */}
       {subCategories.length > 0 && (
         <SubCategoryGrid
           categories={subCategories}
-          currentCategoryId={currentCategoryId || undefined}
-          showAllOption={true}
-          defaultShowCount={6}
+          currentCategory={currentCategory || undefined}
+          showAllOption={false}
+          defaultShowCount={12}
         />
       )}
 
