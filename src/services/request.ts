@@ -6,13 +6,14 @@
 
 import Taro from '@tarojs/taro'
 import { ApiResponse, API_ERROR_CODE } from '../types/api'
+import { API_BASE_URL } from '../config/api'
 
 /**
  * API配置
  */
 const API_CONFIG = {
-  /** 基础URL(开发环境) */
-  BASE_URL: 'http://localhost:8080',
+  /** 基础URL (从配置文件获取，根据环境自动切换) */
+  BASE_URL: API_BASE_URL,
   /** 请求超时时间(毫秒) */
   TIMEOUT: 10000,
   /** Token存储Key */

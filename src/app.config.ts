@@ -8,6 +8,9 @@ export default defineAppConfig({
     'pages/news/detail',
     'pages/mine/index',
     'pages/product/detail/index',
+    // 分类相关页面
+    'pages/category-nav/index',
+    'pages/product-list/index',
     // 核销券相关页面
     'pages/voucher/list/index',
     'pages/voucher/detail/index',

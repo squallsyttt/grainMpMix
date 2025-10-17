@@ -2,7 +2,7 @@
   "libVersion": "2.31.1",
   "projectname": "grainMpMix",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "coverView": false,
     "lazyloadPlaceholderEnable": false,
     "skylineRenderEnable": false,
