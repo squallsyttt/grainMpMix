@@ -14,13 +14,16 @@ import { Product } from '../../types/product'
 import MockService from '../../data/mock'
 import './index.less'
 
+// 导入广告位图片
+import adv1 from '../../assets/advert/pos/adv1.png'
+
 function Index() {
   const { province, city, showSelector, closeSelector, setRegion } = useRegion()
 
   // 广告位配置 - 后续可以从接口获取
   const [adConfig, setAdConfig] = useState({
     visible: true, // 是否显示广告位
-    imageUrl: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800',
+    imageUrl: adv1,
     title: '新用户专享福利',
     subtitle: '立即领取优惠券，最高减100元',
     linkUrl: '',

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Image, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
+import { ArrowRight } from '@nutui/icons-react-taro';
 import './index.less';
 
 interface HorizontalAdProps {
@@ -41,24 +42,30 @@ const HorizontalAd: React.FC<HorizontalAdProps> = ({
 
   return (
     <View className='horizontal-ad' onClick={handleAdClick}>
-      <View className='ad-container' style={{ background: backgroundColor }}>
-        <View className='ad-content'>
-          <View className='ad-text'>
-            <Text className='ad-title'>{title}</Text>
-            <Text className='ad-subtitle'>{subtitle}</Text>
-          </View>
-          <View className='ad-action'>
-            <Text className='action-text'>立即查看</Text>
-            <Text className='action-arrow'>→</Text>
-          </View>
-        </View>
+      <View className='ad-card' style={{ background: backgroundColor }}>
+        {/* 图片区域 */}
         {imageUrl && (
-          <Image
-            className='ad-image'
-            src={imageUrl}
-            mode='aspectFit'
-          />
+          <View className='ad-image-wrapper'>
+            <Image
+              className='ad-image'
+              src={imageUrl}
+              mode='aspectFill'
+            />
+            <View className='ad-image-overlay' />
+          </View>
         )}
+
+        {/* 内容区域 */}
+        <View className='ad-content'>
+          <View className='ad-header'>
+            <View className='ad-badge'>
+              <Text className='badge-text'>限时优惠</Text>
+            </View>
+            <Text className='ad-title'>{title}</Text>
+          </View>
+
+          <Text className='ad-subtitle'>{subtitle}</Text>
+        </View>
       </View>
     </View>
   );

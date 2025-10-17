@@ -1,166 +1,121 @@
 .horizontal-ad {
   padding: 16px;
   width: 100%;
-  max-width: 100vw;
   box-sizing: border-box;
-  background: #f5f7fa;
-  position: relative;
-  overflow: hidden;
 
-  // 顶部分隔线
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(0, 0, 0, 0.06) 20%,
-      rgba(0, 0, 0, 0.06) 80%,
-      transparent 100%);
-  }
-
-  .ad-container {
+  .ad-card {
     position: relative;
     width: 100%;
-    max-width: 100%;
-    border-radius: 14px;
-    padding: 20px 20px 20px 24px;
+    border-radius: 16px;
     overflow: hidden;
-    box-sizing: border-box;
-    background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
-    border: 1.5px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
-                0 2px 8px rgba(0, 0, 0, 0.04),
-                0 1px 2px rgba(0, 0, 0, 0.02);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.12),
+      0 4px 12px rgba(0, 0, 0, 0.08);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    min-height: 95px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    // 左侧装饰条 - 更粗更醒目
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 5px;
-      background: linear-gradient(180deg, #FF6B35 0%, #FF8856 50%, #FF6B35 100%);
-      border-radius: 14px 0 0 14px;
-      box-shadow: 2px 0 8px rgba(255, 107, 53, 0.3);
-    }
-
-    // 右上角装饰光晕
-    &::after {
-      content: '';
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle, rgba(255, 107, 53, 0.08) 0%, transparent 65%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
 
     &:active {
-      transform: translateY(1px) scale(0.99);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1),
-                  0 1px 4px rgba(0, 0, 0, 0.06);
+      transform: scale(0.98);
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.06);
     }
   }
 
-  .ad-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 12px;
-    z-index: 1;
+  // 图片区域
+  .ad-image-wrapper {
     position: relative;
-    padding-left: 8px;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
   }
 
-  .ad-text {
+  .ad-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // 图片遮罩层
+  .ad-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.3) 0%,
+      rgba(0, 0, 0, 0.15) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  // 内容区域
+  .ad-content {
+    position: relative;
+    padding: 16px;
+    background: #ffffff;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
+  // 头部区域（徽章+标题在同一行）
+  .ad-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  // 徽章
+  .ad-badge {
+    flex-shrink: 0;
+    display: inline-flex;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+    border-radius: 10px;
+    box-shadow:
+      0 2px 6px rgba(255, 107, 107, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+    .badge-text {
+      font-size: 10px;
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  // 标题
   .ad-title {
-    font-size: 17px;
+    flex: 1;
+    font-size: 16px;
     font-weight: 700;
     color: #1a1a1a;
-    line-height: 1.4;
-    letter-spacing: 0.3px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    line-height: 1.3;
+    letter-spacing: -0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
+  // 副标题（最多两行）
   .ad-subtitle {
     font-size: 13px;
     font-weight: 500;
     color: #666666;
     line-height: 1.5;
-  }
-
-  .ad-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 16px;
-    background: linear-gradient(135deg, #FF6B35 0%, #FF8856 100%);
-    border-radius: 18px;
-    box-shadow: 0 3px 8px rgba(255, 107, 53, 0.3),
-                0 1px 4px rgba(255, 107, 53, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    align-self: flex-start;
-    transition: all 0.25s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    &:active {
-      transform: scale(0.96);
-      box-shadow: 0 1px 5px rgba(255, 107, 53, 0.25),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    }
-
-    .action-text {
-      font-size: 13px;
-      font-weight: 600;
-      color: #ffffff;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-      letter-spacing: 0.3px;
-    }
-
-    .action-arrow {
-      font-size: 15px;
-      font-weight: 700;
-      color: #ffffff;
-      transform: translateX(0);
-      transition: transform 0.25s ease;
-    }
-  }
-
-  .ad-container:active .action-arrow {
-    transform: translateX(3px);
-  }
-
-  .ad-image {
-    position: absolute;
-    right: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 85px;
-    height: 85px;
-    object-fit: contain;
-    opacity: 0.92;
-    z-index: 0;
-    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
-    pointer-events: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
   }
 }
 
@@ -169,24 +124,25 @@
   .horizontal-ad {
     padding: 12px;
 
-    .ad-container {
-      padding: 16px 16px 16px 20px;
-      min-height: 85px;
+    .ad-image-wrapper {
+      height: 160px;
+    }
+
+    .ad-content {
+      padding: 14px;
+      gap: 6px;
     }
 
     .ad-title {
-      font-size: 16px;
+      font-size: 15px;
     }
 
     .ad-subtitle {
       font-size: 12px;
     }
 
-    .ad-image {
-      width: 75px;
-      height: 75px;
-      right: 12px;
+    .ad-badge .badge-text {
+      font-size: 9px;
     }
   }
 }
-
