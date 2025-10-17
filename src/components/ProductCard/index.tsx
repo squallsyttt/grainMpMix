@@ -1,10 +1,10 @@
 import React from 'react'
 import { View, Image, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { Tag, Rate } from '@nutui/nutui-react-taro'
+import { Rate } from '@nutui/nutui-react-taro'
 import { Product } from '../../types/product'
 import { processImageUrl, getErrorPlaceholder } from '../../utils/imageHelper'
-import { formatPrice, formatCount } from '../../utils/dataHelper'
+import { formatCount } from '../../utils/dataHelper'
 import './index.less'
 
 /**
@@ -106,11 +106,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* 促销标签 */}
           {showTags && getPromotionTag() && (
             <View className="product-card__badge">
-              <Tag type="danger" size="small">
-                {getPromotionTag()}
-              </Tag>
+              <Text className="product-card__badge-text">{getPromotionTag()}</Text>
             </View>
           )}
+          {/* 已售信息 */}
+          <View className="product-card__sales-badge">
+            <Text className="product-card__sales-badge-text">已售 {formatCount(product.sales)}</Text>
+          </View>
         </View>
 
         {/* 商品信息 */}
@@ -122,9 +124,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {showTags && product.tags && product.tags.length > 0 && (
             <View className="product-card__tags">
               {product.tags.slice(0, 2).map((tag, index) => (
-                <Tag key={index} type="primary" size="small" plain>
-                  {tag}
-                </Tag>
+                <View key={index} className="product-card__tag">
+                  <Text className="product-card__tag-text">{tag}</Text>
+                </View>
               ))}
             </View>
           )}
@@ -143,22 +145,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <Text className="product-card__original-price">
                 ¥{product.originalPrice.toFixed(2)}
               </Text>
-            )}
-          </View>
-
-          {/* 销量和评分 */}
-          <View className="product-card__meta">
-            <Text className="product-card__sales">已售 {formatCount(product.sales)}</Text>
-            {showRating && (
-              <View className="product-card__rating">
-                <Rate
-                  defaultValue={product.rating}
-                  readOnly
-                />
-                <Text className="product-card__rating-text">
-                  {product.rating.toFixed(1)}
-                </Text>
-              </View>
             )}
           </View>
         </View>
@@ -183,11 +169,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* 促销标签 */}
           {showTags && getPromotionTag() && (
             <View className="product-card__badge">
-              <Tag type="danger" size="small">
-                {getPromotionTag()}
-              </Tag>
+              <Text className="product-card__badge-text">{getPromotionTag()}</Text>
             </View>
           )}
+          {/* 已售信息 */}
+          <View className="product-card__sales-badge">
+            <Text className="product-card__sales-badge-text">已售 {formatCount(product.sales)}</Text>
+          </View>
         </View>
 
         {/* 商品信息 */}
@@ -202,9 +190,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {showTags && product.tags && product.tags.length > 0 && (
             <View className="product-card__tags">
               {product.tags.slice(0, 3).map((tag, index) => (
-                <Tag key={index} type="primary" size="small" plain>
-                  {tag}
-                </Tag>
+                <View key={index} className="product-card__tag">
+                  <Text className="product-card__tag-text">{tag}</Text>
+                </View>
               ))}
             </View>
           )}
@@ -225,19 +213,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 <Text className="product-card__original-price">
                   ¥{product.originalPrice.toFixed(2)}
                 </Text>
-              )}
-            </View>
-
-            {/* 销量和评分 */}
-            <View className="product-card__meta">
-              <Text className="product-card__sales">已售 {formatCount(product.sales)}</Text>
-              {showRating && (
-                <View className="product-card__rating">
-                  <Rate
-                    defaultValue={product.rating}
-                    readOnly
-                  />
-                </View>
               )}
             </View>
           </View>
