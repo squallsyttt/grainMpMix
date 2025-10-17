@@ -1,0 +1,125 @@
+/**
+ * 区块标题样式 - 精致专业设计
+ */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  position: relative;
+
+  // 底部装饰线
+  &::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    bottom: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--nutui-brand-color, #fa2c19) 0%, transparent 100%);
+    border-radius: 2px;
+  }
+
+  &__left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  &__title-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    position: relative;
+    padding-left: 12px;
+
+    // 左侧竖线装饰
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 18px;
+      background: var(--nutui-brand-color, #fa2c19);
+      border-radius: 2px;
+    }
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.4;
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.4;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background-color: #f5f5f5;
+    transition: all 0.2s;
+
+    &:active {
+      background-color: #e8e8e8;
+      transform: scale(0.96);
+    }
+  }
+
+  &__more-text {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+  }
+
+  /* ==================== 主题变体 ==================== */
+
+  // 默认主题
+  &--default {
+    background-color: transparent;
+  }
+
+  // 主色主题
+  &--primary {
+    &::after {
+      background: linear-gradient(90deg, var(--nutui-brand-color, #fa2c19) 0%, #ff8856 100%);
+      width: 60px;
+      height: 4px;
+    }
+
+    .section-header__title-wrapper::before {
+      background: linear-gradient(180deg, var(--nutui-brand-color, #fa2c19) 0%, #ff8856 100%);
+      width: 5px;
+      height: 20px;
+    }
+
+    .section-header__title {
+      font-size: 19px;
+      font-weight: 700;
+    }
+  }
+
+  // 渐变主题
+  &--gradient {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+    border-radius: 12px 12px 0 0;
+    padding: 18px 20px 14px;
+
+    &::after {
+      left: 20px;
+      right: 20px;
+      width: auto;
+      background: linear-gradient(90deg, var(--nutui-brand-color, #fa2c19) 0%, #ff8856 50%, transparent 100%);
+    }
+  }
+}

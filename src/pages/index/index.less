@@ -21,15 +21,40 @@
   }
 }
 
+/* ==================== 区块样式 ==================== */
+
 .page__section {
-  padding: 24px 20px;
   width: 100%;
   max-width: 100vw;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
+  margin-bottom: 12px;
+
+  // 卡片样式变体
+  &--card {
+    background-color: #fff;
+    border-radius: 16px 16px 0 0;
+    padding-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  // 调试区块样式
+  &--debug {
+    background-color: #fff;
+    border-radius: 12px;
+    margin: 12px 16px;
+    padding: 0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
 }
+
+.page__section-content {
+  padding: 0 20px;
+}
+
+/* ==================== 旧样式（保留兼容性）==================== */
 
 .page__title {
   font-size: 24px;
@@ -63,54 +88,10 @@
   }
 }
 
-// 区块标题
-.page__section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
+/* ==================== 开发调试相关 ==================== */
 
-.page__section-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-}
-
-.page__section-more {
-  font-size: 12px;
-  color: #999;
-
-  &:active {
-    opacity: 0.7;
-  }
-}
-
-// 商品网格
-.page__product-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.page__product-item {
-  width: 100%;
-}
-
-.page__loading {
-  text-align: center;
-  padding: 20px;
-  color: #999;
-  font-size: 14px;
-}
-
-// 快捷入口区域（开发调试用）
-.page__debug-section {
-  background-color: #fff;
-  border-radius: 12px;
-  margin: 12px 16px;
-  padding: 20px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+.page__debug-content {
+  padding: 16px 20px;
 }
 
 .page__quick-links {
@@ -180,4 +161,15 @@
   font-size: 12px;
   color: #d48806;
   line-height: 1.6;
+}
+
+// 调试触发区域 - 隐藏但可点击
+.page__debug-trigger {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  opacity: 0;
+  z-index: 999;
 }
