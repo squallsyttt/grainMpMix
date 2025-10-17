@@ -141,12 +141,19 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0; // 防止被挤压
+
+    // 自定义 Rate 组件样式
+    --nutui-rate-item-margin: 4px; // 星星间距
+    --nutui-rate-icon-color: #ff6b00; // 激活颜色
+    font-size: 16px; // 通过字体大小控制图标大小
   }
 
   &__rating-text {
     font-size: 14px;
     color: #ff6b00;
     font-weight: 500;
+    flex-shrink: 0;
   }
 
   &__review-count {

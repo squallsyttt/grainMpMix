@@ -118,11 +118,19 @@
       display: flex;
       align-items: center;
       gap: 4px;
+      flex-shrink: 0; // 防止被挤压
+      min-width: 0; // 允许内容自适应
+
+      // 自定义 Rate 组件样式
+      --nutui-rate-item-margin: 2px; // 减小星星间距
+      --nutui-rate-icon-color: #ff6b00; // 激活颜色
+      font-size: 12px; // 通过字体大小控制图标大小
     }
 
     .product-card__rating-text {
       font-size: 12px;
       color: #ff6b00;
+      flex-shrink: 0;
     }
   }
 
@@ -250,6 +258,12 @@
       display: flex;
       align-items: center;
       gap: 4px;
+      flex-shrink: 0; // 防止被挤压
+
+      // 自定义 Rate 组件样式
+      --nutui-rate-item-margin: 2px; // 减小星星间距
+      --nutui-rate-icon-color: #ff6b00; // 激活颜色
+      font-size: 12px; // 通过字体大小控制图标大小
     }
   }
 }

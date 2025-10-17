@@ -242,11 +242,8 @@ const ProductDetail: React.FC = () => {
       <View className="product-detail__rating-section">
         <View className="product-detail__rating">
           <Rate
-            modelValue={product.rating}
-            spacing={4}
-            size={16}
-            readonly
-            activeColor="#ff6b00"
+            defaultValue={product.rating}
+            readOnly
           />
           <Text className="product-detail__rating-text">{product.rating.toFixed(1)}</Text>
           <Text className="product-detail__review-count">

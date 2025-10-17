@@ -152,11 +152,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {showRating && (
               <View className="product-card__rating">
                 <Rate
-                  modelValue={product.rating}
-                  spacing={2}
-                  size={12}
-                  readonly
-                  activeColor="#ff6b00"
+                  defaultValue={product.rating}
+                  readOnly
                 />
                 <Text className="product-card__rating-text">
                   {product.rating.toFixed(1)}
@@ -237,11 +234,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {showRating && (
                 <View className="product-card__rating">
                   <Rate
-                    modelValue={product.rating}
-                    spacing={2}
-                    size={12}
-                    readonly
-                    activeColor="#ff6b00"
+                    defaultValue={product.rating}
+                    readOnly
                   />
                 </View>
               )}
