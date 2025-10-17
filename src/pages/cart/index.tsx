@@ -111,40 +111,47 @@ function Cart() {
 
                 return (
                   <View key={item.product.id} className="cart-item">
-                    <Image
-                      src={item.product.image}
-                      className="product-image"
-                      mode="aspectFill"
-                    />
-                    <View className="product-info">
-                      <Text className="product-name">{item.product.name}</Text>
-                      <Text className="product-price">
-                        {formatUnitPrice(item.product)}
-                      </Text>
-                      <Text className="product-subtotal">
-                        小计: {formatAmount(getSubtotal(item))}
-                      </Text>
-                    </View>
-                    <View className="quantity-control">
-                      <View
-                        className="control-btn"
-                        onClick={() => handleDecrease(item.product.id)}
-                      >
-                        <Text className="control-icon">-</Text>
-                      </View>
-                      <Text className="quantity-text">{item.quantity}</Text>
-                      <View
-                        className={`control-btn ${itemIsOffShelf ? 'disabled' : ''}`}
-                        onClick={() => !itemIsOffShelf && handleIncrease(item.product.id)}
-                      >
-                        <Text className="control-icon">+</Text>
+                    {/* 上半部分：图片 + 商品信息 */}
+                    <View className="cart-item-top">
+                      <Image
+                        src={item.product.image}
+                        className="product-image"
+                        mode="aspectFill"
+                      />
+                      <View className="product-info">
+                        <Text className="product-name">{item.product.name}</Text>
+                        <Text className="product-price">
+                          {formatUnitPrice(item.product)}
+                        </Text>
+                        <Text className="product-subtotal">
+                          小计: {formatAmount(getSubtotal(item))}
+                        </Text>
                       </View>
                     </View>
-                    <View
-                      className="delete-btn"
-                      onClick={() => removeFromCart(item.product.id)}
-                    >
-                      <Del className="delete-icon" size={20} color="#999" />
+
+                    {/* 下半部分：数量控制 + 删除按钮 */}
+                    <View className="cart-item-bottom">
+                      <View className="quantity-control">
+                        <View
+                          className="control-btn"
+                          onClick={() => handleDecrease(item.product.id)}
+                        >
+                          <Text className="control-icon">-</Text>
+                        </View>
+                        <Text className="quantity-text">{item.quantity}</Text>
+                        <View
+                          className={`control-btn ${itemIsOffShelf ? 'disabled' : ''}`}
+                          onClick={() => !itemIsOffShelf && handleIncrease(item.product.id)}
+                        >
+                          <Text className="control-icon">+</Text>
+                        </View>
+                      </View>
+                      <View
+                        className="delete-btn"
+                        onClick={() => removeFromCart(item.product.id)}
+                      >
+                        <Del className="delete-icon" size={20} color="#999" />
+                      </View>
                     </View>
 
                     {/* 下架商品遮罩 (FR-019) */}
