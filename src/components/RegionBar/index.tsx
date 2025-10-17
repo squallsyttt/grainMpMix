@@ -40,7 +40,7 @@ function RegionBar() {
           <Search size={16} className='search-box__icon' />
           <Input
             className='search-box__input'
-            placeholder='搜索商品'
+            placeholder='搜索'
             placeholderClass='search-box__placeholder'
             disabled
           />

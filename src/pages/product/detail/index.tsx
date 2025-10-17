@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, Image, Swiper, SwiperItem } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
-import { Button, Rate, Tag, Divider, Toast, ActionSheet } from '@nutui/nutui-react-taro'
+import { Button, Rate, Divider, Toast, ActionSheet } from '@nutui/nutui-react-taro'
 import { Cart, Star, Service, Location } from '@nutui/icons-react-taro'
 import { Product } from '../../../types/product'
 import { Product as CartProduct } from '../../../types/cart'
@@ -202,9 +202,11 @@ const ProductDetail: React.FC = () => {
               <Text className="product-detail__original-price-text">
                 ¥{product.originalPrice.toFixed(2)}
               </Text>
-              <Tag type="danger" size="small">
-                {Math.round((product.price / product.originalPrice) * 10 * 10) / 10}折
-              </Tag>
+              <View className="product-detail__discount-badge">
+                <Text className="product-detail__discount-badge-text">
+                  {Math.round((product.price / product.originalPrice) * 10 * 10) / 10}折
+                </Text>
+              </View>
             </View>
           )}
         </View>
@@ -216,9 +218,9 @@ const ProductDetail: React.FC = () => {
         {product.tags && product.tags.length > 0 && (
           <View className="product-detail__tags">
             {product.tags.map((tag, index) => (
-              <Tag key={index} type="primary" size="small" plain>
-                {tag}
-              </Tag>
+              <View key={index} className="product-detail__tag">
+                <Text className="product-detail__tag-text">{tag}</Text>
+              </View>
             ))}
           </View>
         )}
@@ -226,9 +228,9 @@ const ProductDetail: React.FC = () => {
         {/* 促销信息 */}
         {product.promotion && (
           <View className="product-detail__promotion">
-            <Tag type="danger" size="small">
-              {product.promotion.label}
-            </Tag>
+            <View className="product-detail__promotion-badge">
+              <Text className="product-detail__promotion-badge-text">{product.promotion.label}</Text>
+            </View>
             {product.promotion.description && (
               <Text className="product-detail__promotion-desc">
                 {product.promotion.description}
@@ -242,8 +244,12 @@ const ProductDetail: React.FC = () => {
       <View className="product-detail__rating-section">
         <View className="product-detail__rating">
           <Rate
-            defaultValue={product.rating}
+            value={product.rating}
             readOnly
+            activeColor="#FF6B35"
+            voidColor="#FFE5D9"
+            size={18}
+            spacing={4}
           />
           <Text className="product-detail__rating-text">{product.rating.toFixed(1)}</Text>
           <Text className="product-detail__review-count">
@@ -302,8 +308,10 @@ const ProductDetail: React.FC = () => {
             size="small"
             onClick={handleAddToCart}
           >
-            <Cart size={16} />
-            加入购物车
+            <View className="product-detail__btn-content">
+              <Cart size={18} />
+              <Text>加入购物车</Text>
+            </View>
           </Button>
           <Button
             className="product-detail__buy-btn"
