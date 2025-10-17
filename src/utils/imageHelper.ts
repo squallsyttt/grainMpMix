@@ -82,6 +82,16 @@ export class ImageHelper {
       return url
     }
 
+    // 如果是本地资源路径（相对路径或require返回的路径），直接返回
+    // 本地路径特征：不以http开头，且包含常见的图片扩展名
+    const isLocalPath = !url.startsWith('http://') &&
+                        !url.startsWith('https://') &&
+                        /\.(png|jpg|jpeg|gif|webp|svg)/i.test(url)
+
+    if (isLocalPath) {
+      return url
+    }
+
     // 如果已经是完整 URL，直接使用
     const isAbsoluteUrl =
       url.startsWith('http://') || url.startsWith('https://')

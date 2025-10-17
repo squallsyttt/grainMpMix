@@ -7,13 +7,19 @@ import ArticleCardSkeleton from '../../components/ArticleCardSkeleton';
 import { useRegion } from '../../contexts/RegionContext';
 import './index.less';
 
+// 导入资讯图片
+import news1 from '../../assets/advert/news/news1.png'
+import news2 from '../../assets/advert/news/news2.png'
+import news3 from '../../assets/advert/news/news3.png'
+import news4 from '../../assets/advert/news/news4.png'
+
 // 模拟文章数据
 const mockArticles = [
   {
     id: 1,
     title: '粮食市场最新动态：2024年第一季度分析报告',
     summary: '本季度粮食市场整体保持稳定，主要粮食作物价格小幅波动，供需关系平衡...',
-    cover: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400',
+    cover: news1,
     category: '市场动态',
     publishTime: '2024-01-15',
     views: 1280
@@ -22,7 +28,7 @@ const mockArticles = [
     id: 2,
     title: '智慧农业新趋势：科技助力粮食生产',
     summary: '随着物联网、大数据、人工智能等技术的发展，智慧农业正在改变传统粮食生产方式...',
-    cover: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400',
+    cover: news2,
     category: '科技前沿',
     publishTime: '2024-01-12',
     views: 2156
@@ -31,7 +37,7 @@ const mockArticles = [
     id: 3,
     title: '粮食储备管理新规解读',
     summary: '国家最新发布的粮食储备管理办法，对粮食安全保障提出了更高要求...',
-    cover: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
+    cover: news3,
     category: '政策法规',
     publishTime: '2024-01-10',
     views: 986
@@ -40,7 +46,7 @@ const mockArticles = [
     id: 4,
     title: '优质粮食工程实施成效显著',
     summary: '自优质粮食工程实施以来，粮食品质持续提升，农民收入稳步增长...',
-    cover: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400',
+    cover: news4,
     category: '行业新闻',
     publishTime: '2024-01-08',
     views: 1542
@@ -49,7 +55,7 @@ const mockArticles = [
     id: 5,
     title: '绿色储粮技术推广应用实践',
     summary: '绿色储粮技术的推广，有效降低了粮食损耗，提高了储粮质量和经济效益...',
-    cover: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400',
+    cover: news1,
     category: '技术应用',
     publishTime: '2024-01-05',
     views: 1103
@@ -58,7 +64,7 @@ const mockArticles = [
     id: 6,
     title: '粮食供应链数字化转型路径探索',
     summary: '数字化转型正在重塑粮食供应链各个环节，提升效率和透明度...',
-    cover: 'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400',
+    cover: news2,
     category: '数字化',
     publishTime: '2024-01-03',
     views: 1876

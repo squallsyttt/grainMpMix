@@ -3,12 +3,16 @@ import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import './detail.less';
 
+// 导入资讯详情图片
+import news1 from '../../assets/advert/news/news1.png'
+import news2 from '../../assets/advert/news/news2.png'
+
 // 模拟文章详情数据
 const mockArticleDetail = {
   1: {
     id: 1,
     title: '粮食市场最新动态：2024年第一季度分析报告',
-    cover: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800',
+    cover: news1,
     category: '市场动态',
     publishTime: '2024-01-15 10:30',
     author: '市场分析部',
@@ -45,7 +49,7 @@ const mockArticleDetail = {
   2: {
     id: 2,
     title: '智慧农业新趋势：科技助力粮食生产',
-    cover: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800',
+    cover: news2,
     category: '科技前沿',
     publishTime: '2024-01-12 14:20',
     author: '科技创新部',

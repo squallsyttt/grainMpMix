@@ -1,3 +1,8 @@
+// 导入 banner 图片
+import banner1 from '../assets/advert/banner/banner1.png'
+import banner2 from '../assets/advert/banner/banner2.png'
+import banner3 from '../assets/advert/banner/banner3.png'
+
 // 轮播Banner数据
 export interface BannerItem {
   id: string;
@@ -9,17 +14,17 @@ export interface BannerItem {
 export const banners: BannerItem[] = [
   {
     id: 'banner1',
-    imageUrl: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800',
+    imageUrl: banner1,
     title: '优质糯米新鲜上市',
   },
   {
     id: 'banner2',
-    imageUrl: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=800',
+    imageUrl: banner2,
     title: '有机大米健康之选',
   },
   {
     id: 'banner3',
-    imageUrl: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800',
+    imageUrl: banner3,
     title: '特价专区限时抢购',
   },
 ];
